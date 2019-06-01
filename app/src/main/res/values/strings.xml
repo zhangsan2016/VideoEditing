@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">" VideoEditing"</string>
+
+    <string name="app_name">TvOnvifFinder</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Connect to Service</string>
+    <string name="menu_settings2">Get IPCams</string>
+
 </resources>
