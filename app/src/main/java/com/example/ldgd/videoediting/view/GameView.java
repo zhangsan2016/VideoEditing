@@ -37,13 +37,12 @@ public class GameView extends View {
         super.onDraw(canvas);
         //设置无锯齿
         mPaint.setAntiAlias(true);
-        canvas.drawARGB(50, 255, 227, 0);
+     //   canvas.drawARGB(50, 255, 227, 0);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(StrokeWidth);
-        mPaint.setColor(Color.GREEN);
         mPaint.setAlpha(100);
-        // 绘制绿色实心矩形
-       // canvas.drawRect(100, 200, 400, 200 + 400, mPaint);
+        mPaint.setStrokeWidth(2);
+
         mPaint.setColor(Color.RED);
         canvas.drawRect(rect,mPaint);
     }
