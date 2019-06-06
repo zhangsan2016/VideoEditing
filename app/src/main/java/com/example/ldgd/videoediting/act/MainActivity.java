@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
-import com.example.ldgd.videoediting.view.GameView;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.xmic.tvonvif.IPCamManager.IPCam;
@@ -156,10 +155,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         findView();
 
-        // 设置矩形绘制（用于框选摄像区域）
-        GameView gameView = new GameView(this);
+        // 设置矩形绘制（用于框选）
+      /*  GameView gameView = new GameView(this);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-        addContentView(gameView,layoutParams);
+        addContentView(gameView,layoutParams);*/
 
 
         if (mServiceConnection == null) {
@@ -168,7 +167,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onServiceDisconnected(ComponentName name) {
                     mService = null;
-                    mAdapter = null;
+                 //   mAdapter = null;
                 }
 
                 @Override
@@ -360,11 +359,13 @@ public class MainActivity extends Activity {
         }
 
         public void setCameraDevices(List<CameraDevice> list) {
+
             if (list != null) {
                 cameraDevices.clear();
                 cameraDevices.addAll(list);
                 notifyDataSetChanged();
             }
+
         }
 
         @Override
@@ -389,7 +390,7 @@ public class MainActivity extends Activity {
                 convertView = View.inflate(mContext,
                         android.R.layout.simple_expandable_list_item_2, null);
             }
-            CameraDevice device = cameraDevices.get(position);
+            CameraDevice device = mFinder.getCameraList().get(position);
             TextView title = (TextView) convertView
                     .findViewById(android.R.id.text1);
             title.setTextColor(Color.BLACK);
