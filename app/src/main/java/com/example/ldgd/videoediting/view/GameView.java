@@ -45,6 +45,7 @@ public class GameView extends View {
 
         mPaint.setColor(Color.RED);
         canvas.drawRect(rect,mPaint);
+
     }
 
     @Override
