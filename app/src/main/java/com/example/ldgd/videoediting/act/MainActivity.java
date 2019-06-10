@@ -334,7 +334,7 @@ public class MainActivity extends Activity {
 						mDevice.height, Bitmap.Config.ALPHA_8);*/
 
                 Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
-                        mDevice.height, Bitmap.Config.ARGB_8888);
+                        mDevice.height, Bitmap.Config.ALPHA_8);
 
                // dst.getByteBuffer().rewind();
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
