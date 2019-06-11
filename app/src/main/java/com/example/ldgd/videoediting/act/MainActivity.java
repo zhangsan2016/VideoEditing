@@ -91,32 +91,15 @@ public class MainActivity extends Activity {
                     try {
                         Bitmap bitmap = (Bitmap) msg.obj;
 
-                        int width = bitmap.getWidth();
-                        int height = bitmap.getHeight();
-                        // 设置想要的大小
-                        int newWidth = msg.arg1;
-                        int newHeight = msg.arg2;
-                        // 计算缩放比例
-                        float scaleWidth = ((float) newWidth) / width;
-                        float scaleHeight = ((float) newHeight) / height;
-                        Matrix matrix = new Matrix();
-                        matrix.postScale(scaleWidth, scaleHeight);
-                        Bitmap mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
-
-
                         /*Bitmap bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);*/
 
                         MainActivity activity = mActivity.get();
                         Canvas canvas = activity.mHolder.lockCanvas();
-                        canvas.drawBitmap(mbitmap, 0, 0, null);
+                        canvas.drawBitmap(bitmap, 0, 0, null);
                         activity.mHolder.unlockCanvasAndPost(canvas);
 
-                        if (!mbitmap.isRecycled()) {
-                            mbitmap.recycle();
-                            mbitmap = null;
-                            System.gc();
-                        }
+
                         if (!bitmap.isRecycled()) {
                             bitmap.recycle();
                             bitmap = null;
@@ -334,11 +317,29 @@ public class MainActivity extends Activity {
 						mDevice.height, Bitmap.Config.ALPHA_8);*/
 
                 Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
-                        mDevice.height, Bitmap.Config.ALPHA_8);
-
-               // dst.getByteBuffer().rewind();
+                        mDevice.height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
-                Message msgStr = mHandler.obtainMessage(1, bitmap);
+
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                // 设置想要的大小
+                int newWidth = mSurfaceView.getWidth();;
+                int newHeight =  mSurfaceView.getHeight();
+                // 计算缩放比例
+                float scaleWidth = ((float) newWidth) / width;
+                float scaleHeight = ((float) newHeight) / height;
+                Matrix matrix = new Matrix();
+                matrix.postScale(scaleWidth, scaleHeight);
+                Bitmap mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+
+                if (!bitmap.isRecycled()) {
+                    bitmap.recycle();
+                    bitmap = null;
+                    System.gc();
+                }
+
+
+                Message msgStr = mHandler.obtainMessage(1, mbitmap);
                 msgStr.arg1 = mSurfaceView.getWidth();
                 msgStr.arg2 = mSurfaceView.getHeight();
                 mHandler.sendMessage(msgStr);
