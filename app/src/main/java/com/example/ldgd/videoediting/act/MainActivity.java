@@ -49,7 +49,6 @@ import com.xmic.tvonvif.finder.OnCameraFinderListener;
 import com.xmic.tvonvif.finder.OnSoapDoneListener;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,16 +75,17 @@ public class MainActivity extends Activity {
 
     static class MyHandle extends Handler {
 
-        WeakReference<MainActivity> mActivity;
+      //  WeakReference<MainActivity> mActivity;
+        MainActivity mActivity;
 
         public MyHandle(MainActivity mActivity) {
             super();
-            this.mActivity = new WeakReference<MainActivity>(mActivity);
+            this.mActivity = mActivity;
         }
 
         @Override
         public void handleMessage(Message msg) {
-            mActivity.get().mProgressDialog.hide();
+            mActivity.mProgressDialog.hide();
             switch (msg.what) {
                 case 1:
                     try {
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
                         /*Bitmap bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);*/
 
-                        MainActivity activity = mActivity.get();
+                        MainActivity activity = mActivity;
                         Canvas canvas = activity.mHolder.lockCanvas();
                         canvas.drawBitmap(bitmap, 0, 0, null);
                         activity.mHolder.unlockCanvasAndPost(canvas);
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
                     }
                     break;
                 case 2:
-                    mActivity.get().showToast("登录失败");
+                    mActivity.showToast("登录失败");
                 default:
                     break;
             }
@@ -293,9 +293,11 @@ public class MainActivity extends Activity {
     private class VideoPlayer implements Runnable {
 
         private CameraDevice mDevice;
+        private Bitmap bitmap;
 
         public VideoPlayer(CameraDevice cd) {
             mDevice = cd;
+
         }
 
         @Override
@@ -316,7 +318,7 @@ public class MainActivity extends Activity {
 			/*	Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
 						mDevice.height, Bitmap.Config.ALPHA_8);*/
 
-                Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
+                bitmap = Bitmap.createBitmap(mDevice.width,
                         mDevice.height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
 
