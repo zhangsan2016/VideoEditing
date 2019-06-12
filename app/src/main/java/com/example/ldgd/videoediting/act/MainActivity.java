@@ -14,7 +14,6 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
+import com.example.ldgd.videoediting.util.LogUtil;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.xmic.tvonvif.IPCamManager.IPCam;
@@ -49,10 +49,14 @@ import com.xmic.tvonvif.finder.OnCameraFinderListener;
 import com.xmic.tvonvif.finder.OnSoapDoneListener;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.height;
+import static android.R.attr.width;
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
+import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2RGBA;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
 
@@ -75,17 +79,16 @@ public class MainActivity extends Activity {
 
     static class MyHandle extends Handler {
 
-      //  WeakReference<MainActivity> mActivity;
-        MainActivity mActivity;
+        WeakReference<MainActivity> mActivity;
 
         public MyHandle(MainActivity mActivity) {
             super();
-            this.mActivity = mActivity;
+            this.mActivity = new WeakReference<MainActivity>(mActivity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            mActivity.mProgressDialog.hide();
+            mActivity.get().mProgressDialog.hide();
             switch (msg.what) {
                 case 1:
                     try {
@@ -94,7 +97,7 @@ public class MainActivity extends Activity {
                         /*Bitmap bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);*/
 
-                        MainActivity activity = mActivity;
+                        MainActivity activity = mActivity.get();
                         Canvas canvas = activity.mHolder.lockCanvas();
                         canvas.drawBitmap(bitmap, 0, 0, null);
                         activity.mHolder.unlockCanvasAndPost(canvas);
@@ -112,7 +115,7 @@ public class MainActivity extends Activity {
                     }
                     break;
                 case 2:
-                    mActivity.showToast("登录失败");
+                    mActivity.get().showToast("登录失败");
                 default:
                     break;
             }
@@ -150,7 +153,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onServiceDisconnected(ComponentName name) {
                     mService = null;
-                 //   mAdapter = null;
+                    //   mAdapter = null;
                 }
 
                 @Override
@@ -293,7 +296,8 @@ public class MainActivity extends Activity {
     private class VideoPlayer implements Runnable {
 
         private CameraDevice mDevice;
-        private Bitmap bitmap;
+        //    private Bitmap bitmap = null;
+        private Bitmap mbitmap;
 
         public VideoPlayer(CameraDevice cd) {
             mDevice = cd;
@@ -313,38 +317,63 @@ public class MainActivity extends Activity {
                         mDevice.height), src.depth(), 4);
                 cvCvtColor(src, dst, CV_BGR2RGBA);
 
-       /*         Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
-                        mDevice.height, Bitmap.Config.ARGB_8888);*/
-			/*	Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
-						mDevice.height, Bitmap.Config.ALPHA_8);*/
 
-                bitmap = Bitmap.createBitmap(mDevice.width,
+                // 计算缩放比例
+                float scaleWidth = ((float) mDevice.width) / width;
+                float scaleHeight = ((float)  mDevice.height) / height;
+                final Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
                         mDevice.height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
+                // 释放 IplImage (关键代码)
+                dst.position(0);
+                cvReleaseImage(dst);
 
-                int width = bitmap.getWidth();
+                LogUtil.e("bitmap.getWidth() =  "+  bitmap.getWidth()  + "    mDevice.width  = " + mDevice.width + "   :  " + "  " );
+
+            /*    int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
                 // 设置想要的大小
-                int newWidth = mSurfaceView.getWidth();;
-                int newHeight =  mSurfaceView.getHeight();
+                int newWidth = mSurfaceView.getWidth();
+                int newHeight = mSurfaceView.getHeight();
                 // 计算缩放比例
                 float scaleWidth = ((float) newWidth) / width;
                 float scaleHeight = ((float) newHeight) / height;
                 Matrix matrix = new Matrix();
                 matrix.postScale(scaleWidth, scaleHeight);
-                Bitmap mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+                mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);*/
 
-                if (!bitmap.isRecycled()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (!bitmap.isRecycled()) {
+                            MainActivity.this.mProgressDialog.hide();
+                            Canvas canvas = MainActivity.this.mHolder.lockCanvas();
+                            canvas.drawBitmap(bitmap, 0, 0, null);
+                            MainActivity.this.mHolder.unlockCanvasAndPost(canvas);
+                            // 回收
+                            bitmap.recycle();
+                            System.gc();
+                        }
+                    }
+                });
+
+            /*    try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+
+           /*     if (!bitmap.isRecycled()) {
                     bitmap.recycle();
-                    bitmap = null;
                     System.gc();
-                }
+                }*/
 
 
-                Message msgStr = mHandler.obtainMessage(1, mbitmap);
+            /*    Message msgStr = mHandler.obtainMessage(1, mbitmap);
                 msgStr.arg1 = mSurfaceView.getWidth();
                 msgStr.arg2 = mSurfaceView.getHeight();
-                mHandler.sendMessage(msgStr);
+                mHandler.sendMessage(msgStr);*/
             }
         }
     }
