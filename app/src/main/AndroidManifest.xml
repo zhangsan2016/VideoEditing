@@ -2,13 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ldgd.videoediting">
 
-
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
-    <!-- 视屏编辑器 ，给陈泉用于框选视屏区域和配置视屏配置文件到Fip文件服务器-->
+    <!-- 视屏编辑器 ，给陈泉用于框选视屏区域和配置视屏配置文件到Fip文件服务器 -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,7 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.xmic.tvonvif.finder.CameraService"></service>
+
+        <service android:name="com.xmic.tvonvif.finder.CameraService" />
+
+        <activity android:name=".act.VideoPlayerActivity"></activity>
     </application>
 
 </manifest>

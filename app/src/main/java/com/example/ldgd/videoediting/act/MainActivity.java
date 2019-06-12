@@ -192,7 +192,6 @@ public class MainActivity extends Activity {
                                     int position, long id) {
                 mNowIndex = position;
                 mLoginDialog.show();
-
             }
 
         });
@@ -270,8 +269,15 @@ public class MainActivity extends Activity {
                         public void onSoapDone(CameraDevice device, boolean success) {
                             // TODO Auto-generated method stub
                             if (success) {
-                                mService.getDb().addCamera(device);
-                                new Thread(new VideoPlayer(device)).start();
+                             /*   mService.getDb().addCamera(device);
+                                new Thread(new VideoPlayer(device)).start();*/
+
+                                Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("CameraDevice",device);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+
                             } else {
                                 Message msgStr = mHandler.obtainMessage(2, null);
                                 mHandler.sendMessage(msgStr);
@@ -322,7 +328,7 @@ public class MainActivity extends Activity {
                 dst.position(0);
                 cvReleaseImage(dst);
 
-                LogUtil.e("bitmap.getWidth() =  "+  bitmap.getWidth()  + "    mDevice.width  = " + mDevice.width + "   :  " + "  " );
+                LogUtil.e("bitmap.getWidth() =  " + bitmap.getWidth() + "    mDevice.width  = " + mDevice.width + "   :  " + "  ");
 
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
@@ -352,8 +358,8 @@ public class MainActivity extends Activity {
                     }
                 });
 
-            if (!bitmap.isRecycled()) {
-                bitmap.recycle();
+                if (!bitmap.isRecycled()) {
+                    bitmap.recycle();
                     System.gc();
                 }
 
