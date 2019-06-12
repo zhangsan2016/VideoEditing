@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -53,8 +54,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.height;
-import static android.R.attr.width;
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2RGBA;
@@ -317,12 +316,7 @@ public class MainActivity extends Activity {
                         mDevice.height), src.depth(), 4);
                 cvCvtColor(src, dst, CV_BGR2RGBA);
 
-
-                // 计算缩放比例
-                float scaleWidth = ((float) mDevice.width) / width;
-                float scaleHeight = ((float)  mDevice.height) / height;
-                final Bitmap bitmap = Bitmap.createBitmap(mDevice.width,
-                        mDevice.height, Bitmap.Config.ARGB_8888);
+                final Bitmap bitmap = Bitmap.createBitmap(mDevice.width, mDevice.height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
                 // 释放 IplImage (关键代码)
                 dst.position(0);
@@ -330,7 +324,7 @@ public class MainActivity extends Activity {
 
                 LogUtil.e("bitmap.getWidth() =  "+  bitmap.getWidth()  + "    mDevice.width  = " + mDevice.width + "   :  " + "  " );
 
-            /*    int width = bitmap.getWidth();
+                int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
                 // 设置想要的大小
                 int newWidth = mSurfaceView.getWidth();
@@ -340,40 +334,29 @@ public class MainActivity extends Activity {
                 float scaleHeight = ((float) newHeight) / height;
                 Matrix matrix = new Matrix();
                 matrix.postScale(scaleWidth, scaleHeight);
-                mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);*/
+                mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        if (!bitmap.isRecycled()) {
+                        if (!mbitmap.isRecycled()) {
                             MainActivity.this.mProgressDialog.hide();
                             Canvas canvas = MainActivity.this.mHolder.lockCanvas();
-                            canvas.drawBitmap(bitmap, 0, 0, null);
+                            canvas.drawBitmap(mbitmap, 0, 0, null);
                             MainActivity.this.mHolder.unlockCanvasAndPost(canvas);
                             // 回收
-                            bitmap.recycle();
+                            mbitmap.recycle();
                             System.gc();
                         }
                     }
                 });
 
-            /*    try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
-
-           /*     if (!bitmap.isRecycled()) {
-                    bitmap.recycle();
+            if (!bitmap.isRecycled()) {
+                bitmap.recycle();
                     System.gc();
-                }*/
+                }
 
-
-            /*    Message msgStr = mHandler.obtainMessage(1, mbitmap);
-                msgStr.arg1 = mSurfaceView.getWidth();
-                msgStr.arg2 = mSurfaceView.getHeight();
-                mHandler.sendMessage(msgStr);*/
             }
         }
     }
