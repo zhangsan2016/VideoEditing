@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
+import com.example.ldgd.videoediting.appliction.MyApplication;
 import com.example.ldgd.videoediting.util.LogUtil;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
@@ -266,17 +267,28 @@ public class MainActivity extends Activity {
                     cd.setOnSoapDoneListener(new OnSoapDoneListener() {
 
                         @Override
-                        public void onSoapDone(CameraDevice device, boolean success) {
+                        public void onSoapDone(final CameraDevice device, boolean success) {
                             // TODO Auto-generated method stub
                             if (success) {
-                             /*   mService.getDb().addCamera(device);
+
+                               /* mService.getDb().addCamera(device);
                                 new Thread(new VideoPlayer(device)).start();*/
 
-                                Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("CameraDevice",device);
-                                intent.putExtras(bundle);
-                                startActivity(intent);
+                               runOnUiThread(new Runnable() {
+                                   @Override
+                                   public void run() {
+
+                                       // 关闭提示
+                                       MainActivity.this.mProgressDialog.hide();
+                                       // 设置当前播放对象到appliction
+                                       MyApplication myApplication = (MyApplication) MainActivity.this.getApplication();
+                                       myApplication.setAppointCameraDevice(device);
+                                       // 启动播放界面
+                                       Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                                       MainActivity.this.startActivity(intent);
+                                   }
+                               });
+
 
                             } else {
                                 Message msgStr = mHandler.obtainMessage(2, null);

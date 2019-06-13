@@ -7,10 +7,9 @@ import com.googlecode.javacv.FrameGrabber.Exception;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.xmic.tvonvif.IPCamManager.IPCam;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-public class CameraDevice implements IPCam, Serializable {
+public class CameraDevice implements IPCam {
 	public UUID uuid;
 	public String serviceURL;
 	private int id;
