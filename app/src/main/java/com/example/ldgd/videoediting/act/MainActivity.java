@@ -38,7 +38,6 @@ import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
-import com.example.ldgd.videoediting.util.LogUtil;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.xmic.tvonvif.IPCamManager.IPCam;
@@ -271,10 +270,10 @@ public class MainActivity extends Activity {
                             // TODO Auto-generated method stub
                             if (success) {
 
-                               /* mService.getDb().addCamera(device);
+                                /*mService.getDb().addCamera(device);
                                 new Thread(new VideoPlayer(device)).start();*/
 
-                               runOnUiThread(new Runnable() {
+                              runOnUiThread(new Runnable() {
                                    @Override
                                    public void run() {
 
@@ -340,7 +339,6 @@ public class MainActivity extends Activity {
                 dst.position(0);
                 cvReleaseImage(dst);
 
-                LogUtil.e("bitmap.getWidth() =  " + bitmap.getWidth() + "    mDevice.width  = " + mDevice.width + "   :  " + "  ");
 
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
@@ -459,10 +457,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        unbindService(mServiceConnection);
-        mServiceConnection = null;
-        mLoginDialog.dismiss();
-        mLoginDialog.cancel();
         Log.e("onvif ", "onDestroy被执行");
         super.onDestroy();
     }

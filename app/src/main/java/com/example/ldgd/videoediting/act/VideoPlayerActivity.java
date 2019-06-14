@@ -5,13 +5,19 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
-import com.example.ldgd.videoediting.util.LogUtil;
+import com.example.ldgd.videoediting.view.GameView;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.xmic.tvonvif.finder.CameraDevice;
 
@@ -26,31 +32,65 @@ public class VideoPlayerActivity extends Activity {
     private CameraDevice device;
     private SurfaceHolder mHolder;
     private SurfaceView mSurfaceView;
+    private PaintFlagsDrawFilter pfd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 去掉窗口标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // 隐藏顶部的状态栏
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_video_player);
 
+        // 初始化 View
         initView();
 
+        // 播放视屏选项
         MyApplication myApplication = (MyApplication) this.getApplication();
-        device   = myApplication.getAppointCameraDevice();
-        if (device != null) {
-         //   mService.getDb().addCamera(device);
+        device = myApplication.getAppointCameraDevice();
+        if (device != null && device.width > 0 && device.height > 0) {
+            //   mService.getDb().addCamera(device);
             new Thread(new VideoPlayer(device)).start();
         }
+
+        // 设置矩形绘制（用于框选）
+        GameView gameView = new GameView(this);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        addContentView(gameView, layoutParams);
+
     }
 
     private void initView() {
 
         mSurfaceView = (SurfaceView) this.findViewById(R.id.surfaceView1);
-
+        pfd = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
         mHolder = mSurfaceView.getHolder();
+
+        // 设置播放状态监听
+        mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+                synchronized (this) {
+                    runGrabberThread = false;
+                }
+            }
+        });
     }
 
 
     private boolean runGrabberThread = false;
+
     private class VideoPlayer implements Runnable {
 
         private CameraDevice mDevice;
@@ -66,6 +106,7 @@ public class VideoPlayerActivity extends Activity {
         public void run() {
             runGrabberThread = true;
             while (runGrabberThread) {
+
                 opencv_core.IplImage src = mDevice.grab();
                 if (src == null) {
                     runGrabberThread = false;
@@ -81,7 +122,6 @@ public class VideoPlayerActivity extends Activity {
                 dst.position(0);
                 cvReleaseImage(dst);
 
-                LogUtil.e("bitmap.getWidth() =  " + bitmap.getWidth() + "    mDevice.width  = " + mDevice.width + "   :  " + "  ");
 
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
@@ -99,13 +139,17 @@ public class VideoPlayerActivity extends Activity {
                     @Override
                     public void run() {
 
-                        if (!mbitmap.isRecycled()) {
-                            Canvas canvas = VideoPlayerActivity.this.mHolder.lockCanvas();
-                            canvas.drawBitmap(mbitmap, 0, 0, null);
-                            VideoPlayerActivity.this.mHolder.unlockCanvasAndPost(canvas);
-                            // 回收
-                            mbitmap.recycle();
-                            System.gc();
+                        synchronized (this) {
+                            if (!mbitmap.isRecycled() && runGrabberThread == true) {
+                                Canvas canvas = VideoPlayerActivity.this.mHolder.lockCanvas();
+                                //  对canvas设置抗锯齿的滤镜，防止变化canvas引起画质降低
+                                canvas.setDrawFilter(pfd);
+                                canvas.drawBitmap(mbitmap, 0, 0, null);
+                                VideoPlayerActivity.this.mHolder.unlockCanvasAndPost(canvas);
+                                // 回收
+                                mbitmap.recycle();
+                                System.gc();
+                            }
                         }
                     }
                 });
@@ -119,6 +163,12 @@ public class VideoPlayerActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        runGrabberThread = false;
+        Log.e("onvif ", "onDestroy被执行");
+        super.onDestroy();
+    }
 
 
 }

@@ -24,7 +24,7 @@
 
         <service android:name="com.xmic.tvonvif.finder.CameraService" />
 
-        <activity android:name=".act.VideoPlayerActivity"></activity>
+        <activity android:name=".act.VideoPlayerActivity" android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
