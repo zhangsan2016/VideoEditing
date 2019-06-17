@@ -458,6 +458,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         Log.e("onvif ", "onDestroy被执行");
+        unbindService(mServiceConnection);
         super.onDestroy();
     }
 

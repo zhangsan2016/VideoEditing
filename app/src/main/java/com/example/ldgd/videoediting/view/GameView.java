@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  * Created by ldgd on 2019/6/6.
@@ -14,7 +14,7 @@ import android.view.View;
  * 说明：
  */
 
-public class GameView extends View {
+public class GameView extends FrameLayout {
 
 
     //  声明Paint对象
@@ -49,6 +49,22 @@ public class GameView extends View {
 
     }
 
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        //设置无锯齿
+        mPaint.setAntiAlias(true);
+        //   canvas.drawARGB(50, 255, 227, 0);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(StrokeWidth);
+        mPaint.setAlpha(100);
+        mPaint.setStrokeWidth(2);
+
+        mPaint.setColor(Color.RED);
+        canvas.drawRect(rect,mPaint);
+
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
