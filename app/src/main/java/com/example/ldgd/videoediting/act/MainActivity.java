@@ -195,6 +195,7 @@ public class MainActivity extends Activity {
             }
 
         });
+
     }
 
     private void findView() {

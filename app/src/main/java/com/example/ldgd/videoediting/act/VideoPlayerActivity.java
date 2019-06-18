@@ -17,8 +17,7 @@ import android.view.WindowManager;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
-import com.example.ldgd.videoediting.util.LogUtil;
-import com.example.ldgd.videoediting.view.GameView;
+import com.example.ldgd.videoediting.view.EditView;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.xmic.tvonvif.finder.CameraDevice;
 
@@ -56,7 +55,7 @@ public class VideoPlayerActivity extends Activity {
         }
 
         // 设置矩形绘制（用于框选）
-        GameView gameView = new GameView(this);
+        EditView gameView = new EditView(this);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addContentView(gameView, layoutParams);
 
@@ -134,9 +133,6 @@ public class VideoPlayerActivity extends Activity {
                 float scaleHeight = ((float) newHeight) / height;
                 Matrix matrix = new Matrix();
                 matrix.postScale(scaleWidth, scaleHeight);
-                LogUtil.e("width =  " + width + "    height = "  + height);
-                LogUtil.e("newWidth =  " + newWidth + "    newHeight = "  + newHeight);
-                LogUtil.e("scaleWidth =  " + scaleWidth + "    scaleHeight = "  + scaleHeight);
                 if(newWidth <= 0 || newHeight <= 0){
                     continue;
                 }
