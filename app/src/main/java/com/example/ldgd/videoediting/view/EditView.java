@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.example.ldgd.videoediting.util.LogUtil;
+import static android.R.attr.right;
 
 /**
  * Created by ldgd on 2019/6/6.
@@ -30,7 +30,7 @@ public class EditView extends FrameLayout {
     // 按钮
     private LinearLayout layout;
     // 框选的状态 - 是否完成编辑
-    private boolean  finish = false;
+    private boolean finish = false;
 
 
     public EditView(Context context) {
@@ -106,14 +106,18 @@ public class EditView extends FrameLayout {
         mPaint.setColor(Color.RED);
 
         canvas.drawRect(rect, mPaint);
-        if(finish){
+        if (finish) {
             layout.setVisibility(VISIBLE);
-        }else{
+            //   layout.layout(layout.getLeft(),layout.getTop(),layout.getRight(),layout.getBottom());
+            float x = rect.right - layout.getWidth() - StrokeWidth;
+            float y = rect.bottom - layout.getHeight() - StrokeWidth;
+            layout.setX(x);
+            layout.setY(y);
+        } else {
             layout.setVisibility(GONE);
         }
         super.dispatchDraw(canvas);
     }
-
 
 
     @Override
@@ -139,10 +143,10 @@ public class EditView extends FrameLayout {
                 invalidate(old);
                 break;
             case MotionEvent.ACTION_UP:
-                if((rect.right - rect.left)  > 100){
+                if ((rect.right - rect.left) > 100) {
                     finish = true;
 
-                }else{
+                } else {
                     finish = false;
                 }
 
