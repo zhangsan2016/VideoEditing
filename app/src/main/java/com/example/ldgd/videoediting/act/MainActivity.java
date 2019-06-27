@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
+import com.example.ldgd.videoediting.util.LogUtil;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.xmic.tvonvif.IPCamManager.IPCam;
@@ -153,6 +154,7 @@ public class MainActivity extends Activity {
                 public void onServiceDisconnected(ComponentName name) {
                     mService = null;
                     //   mAdapter = null;
+                    LogUtil.e(" xxx onServiceDisconnected 执行");
                 }
 
                 @Override
@@ -170,13 +172,14 @@ public class MainActivity extends Activity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-
                                             mAdapter.setCameraDevices(mService.getFinder().getCameraList());
 
                                         }
                                     });
                                 }
                             });
+
+                    LogUtil.e("xxx onServiceConnected 执行");
                 }
             };
         }
@@ -195,6 +198,9 @@ public class MainActivity extends Activity {
             }
 
         });
+
+
+
 
     }
 

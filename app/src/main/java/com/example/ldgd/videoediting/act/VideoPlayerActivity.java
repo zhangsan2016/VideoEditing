@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
+import com.example.ldgd.videoediting.util.LogUtil;
 import com.example.ldgd.videoediting.view.EditView;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.xmic.tvonvif.finder.CameraDevice;
@@ -26,7 +28,7 @@ import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2RGBA;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
 
-public class VideoPlayerActivity extends Activity {
+public class VideoPlayerActivity extends Activity implements EditView.EditViewOnClickListener {
 
     // 当前要播放的设备
     private CameraDevice device;
@@ -58,6 +60,7 @@ public class VideoPlayerActivity extends Activity {
         EditView gameView = new EditView(this);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addContentView(gameView, layoutParams);
+        gameView.setListener(this);
 
     }
 
@@ -90,6 +93,21 @@ public class VideoPlayerActivity extends Activity {
 
 
     private boolean runGrabberThread = false;
+
+
+    @Override
+    public void saveButtonOnClick(Rect rect) {
+        LogUtil.e("saveButtonOnClick 被点击"  + rect.toString());
+        Rect surRect = new Rect();
+        mSurfaceView.getDrawingRect(surRect);
+        LogUtil.e("布局宽度："  + surRect.toString());
+
+    }
+
+    @Override
+    public void cancelButtonOnClick(Rect rect) {
+        LogUtil.e("cancelButtonOnClick 被点击" + rect.toString());
+    }
 
     private class VideoPlayer implements Runnable {
 

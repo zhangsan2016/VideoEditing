@@ -1,13 +1,14 @@
 package com.xmic.tvonvif.finder;
 
-import java.util.List;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.example.ldgd.videoediting.util.LogUtil;
 import com.xmic.tvonvif.database.Database;
+
+import java.util.List;
 
 public class CameraService extends Service {
 
@@ -74,7 +75,9 @@ public class CameraService extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		LogUtil.e("xxx  onServiceConnected 执行"+  "(mFinder != null) = " + (mFinder != null));
 		return super.onStartCommand(intent, flags, startId);
+
 	}
 	
 }

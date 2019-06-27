@@ -6,12 +6,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
-import static android.R.attr.right;
 
 /**
  * Created by ldgd on 2019/6/6.
@@ -31,6 +30,8 @@ public class EditView extends FrameLayout {
     private LinearLayout layout;
     // 框选的状态 - 是否完成编辑
     private boolean finish = false;
+    // 按钮监听事件
+    private EditViewOnClickListener listener;
 
 
     public EditView(Context context) {
@@ -42,6 +43,8 @@ public class EditView extends FrameLayout {
         // new Thread(this).start();
 
         initView(context);
+
+        // View继承FrameLayout后，设置后才会执行绘制
         setWillNotDraw(false);
 
     }
@@ -56,23 +59,41 @@ public class EditView extends FrameLayout {
         layout.setLayoutParams(LP_MM);
 
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Button bt_save = new Button(getContext());
+        Button bt_save = new Button(context);
         bt_save.setLayoutParams(params);
         bt_save.setPadding(10, 10, 10, 10);
         bt_save.setTextColor(Color.WHITE);
         bt_save.setText("保存");
+        bt_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(listener != null){
+                    listener.saveButtonOnClick(rect);
+                }
+            }
+        });
 
 
-        Button bt_cancel = new Button(getContext());
+        Button bt_cancel = new Button(context);
         bt_cancel.setLayoutParams(params);
         bt_cancel.setPadding(10, 10, 10, 10);
         bt_cancel.setTextColor(Color.WHITE);
         bt_cancel.setText("取消");
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(listener != null){
+                    listener.cancelButtonOnClick(rect);
+                }
+
+            }
+        });
 
         layout.addView(bt_save);
         layout.addView(bt_cancel);
 
         addView(layout);
+
     }
 
 
@@ -155,6 +176,16 @@ public class EditView extends FrameLayout {
                 break;
         }
         return true;//处理了触摸信息，消息不再传递
+    }
+
+    public void setListener(EditViewOnClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface EditViewOnClickListener {
+        public void saveButtonOnClick(Rect rect);
+
+        public void cancelButtonOnClick(Rect rect);
     }
 
 }
