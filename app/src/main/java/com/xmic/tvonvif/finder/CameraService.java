@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.example.ldgd.videoediting.util.LogUtil;
 import com.xmic.tvonvif.database.Database;
 
 import java.util.List;
@@ -44,7 +43,6 @@ public class CameraService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
-		LogUtil.e(" xxx onBind 执行");
 		mDb = new Database(getApplicationContext());
 		mDevices = mDb.getCameraDevices();
 		return mBinder;

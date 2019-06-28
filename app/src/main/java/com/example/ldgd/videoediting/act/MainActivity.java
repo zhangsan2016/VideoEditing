@@ -154,7 +154,6 @@ public class MainActivity extends Activity {
                 public void onServiceDisconnected(ComponentName name) {
                     mService = null;
                     //   mAdapter = null;
-                    LogUtil.e(" xxx onServiceDisconnected 执行");
                 }
 
                 @Override
@@ -190,7 +189,6 @@ public class MainActivity extends Activity {
                                 }
                             });
 
-                    LogUtil.e("xxx onServiceConnected 执行");
                 }
             };
         }

@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
@@ -97,10 +96,8 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
 
     @Override
     public void saveButtonOnClick(Rect rect) {
-        LogUtil.e("saveButtonOnClick 被点击"  + rect.toString());
         Rect surRect = new Rect();
         mSurfaceView.getDrawingRect(surRect);
-        LogUtil.e("布局宽度："  + surRect.toString());
 
     }
 
@@ -184,10 +181,11 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
         }
     }
 
+
+
     @Override
     protected void onDestroy() {
         runGrabberThread = false;
-        Log.e("onvif ", "onDestroy被执行");
         super.onDestroy();
     }
 
