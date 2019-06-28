@@ -67,7 +67,7 @@ public class EditView extends FrameLayout {
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(listener != null){
+                if (listener != null) {
                     listener.saveButtonOnClick(rect);
                 }
             }
@@ -82,7 +82,7 @@ public class EditView extends FrameLayout {
         bt_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(listener != null){
+                if (listener != null) {
                     listener.cancelButtonOnClick(rect);
                 }
 
@@ -176,6 +176,11 @@ public class EditView extends FrameLayout {
                 break;
         }
         return true;//处理了触摸信息，消息不再传递
+    }
+
+    public void clear() {
+        rect = new Rect(0, 0, 0, 0);
+        invalidate();
     }
 
     public void setListener(EditViewOnClickListener listener) {

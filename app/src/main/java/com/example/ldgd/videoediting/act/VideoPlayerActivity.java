@@ -34,6 +34,8 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
     private SurfaceHolder mHolder;
     private SurfaceView mSurfaceView;
     private PaintFlagsDrawFilter pfd;
+    // 自定义View 编辑框
+    private EditView editView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +58,10 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
         }
 
         // 设置矩形绘制（用于框选）
-        EditView gameView = new EditView(this);
+        editView = new EditView(this);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        addContentView(gameView, layoutParams);
-        gameView.setListener(this);
+        addContentView(editView, layoutParams);
+        editView.setListener(this);
 
     }
 
@@ -96,14 +98,15 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
 
     @Override
     public void saveButtonOnClick(Rect rect) {
-        Rect surRect = new Rect();
-        mSurfaceView.getDrawingRect(surRect);
+       /* Rect surRect = new Rect();
+        mSurfaceView.getDrawingRect(surRect);*/
 
     }
 
     @Override
     public void cancelButtonOnClick(Rect rect) {
         LogUtil.e("cancelButtonOnClick 被点击" + rect.toString());
+        editView.clear();
     }
 
     private class VideoPlayer implements Runnable {
