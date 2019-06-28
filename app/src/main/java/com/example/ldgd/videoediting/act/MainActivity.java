@@ -74,14 +74,14 @@ public class MainActivity extends Activity {
     private View mLoginView;
     private boolean runGrabberThread = false;
     private static CameraService mService;
-    private static ServiceConnection mServiceConnection;
+    private  ServiceConnection mServiceConnection;
     private int mNowIndex = -1;
 
     static class MyHandle extends Handler {
 
         WeakReference<MainActivity> mActivity;
 
-        public MyHandle(MainActivity mActivity) {
+        public  MyHandle(MainActivity mActivity) {
             super();
             this.mActivity = new WeakReference<MainActivity>(mActivity);
         }
@@ -169,10 +169,21 @@ public class MainActivity extends Activity {
                             new OnCameraFinderListener() {
                                 @Override
                                 public void OnCameraListUpdated() {
+
+
+                                    // 重新获取Fragment的强引用，并且判断是否存活
+                                    MainActivity act = mHandler.mActivity.get();
+                                    if (act == null ) {
+                                        // Fragment死亡了，不再做任何的事情
+                                        LogUtil.e("弱引用已经死亡！");
+                                        return;
+                                    }
+
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            mAdapter.setCameraDevices(mService.getFinder().getCameraList());
+                                            List<CameraDevice>  list =   mService.getFinder().getCameraList();
+                                            mAdapter.setCameraDevices(list);
 
                                         }
                                     });
@@ -387,18 +398,18 @@ public class MainActivity extends Activity {
     private class MyAdapter extends BaseAdapter {
 
         private Context mContext;
-        private CameraFinder mFinder;
+     //   private CameraFinder mFinder;
         private List<CameraDevice> cameraDevices;
 
         public MyAdapter(Context context, CameraFinder finder) {
             mContext = context;
-            mFinder = finder;
+       //     mFinder = finder;
             cameraDevices = new ArrayList<CameraDevice>();
         }
 
         public void setCameraDevices(List<CameraDevice> list) {
-
-            if (list != null) {
+          //    notifyDataSetChanged();
+           if (list != null) {
                 cameraDevices.clear();
                 cameraDevices.addAll(list);
                 notifyDataSetChanged();
@@ -408,13 +419,12 @@ public class MainActivity extends Activity {
 
         @Override
         public int getCount() {
-            int result = cameraDevices.size();
-            return result;
+            return   cameraDevices.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return cameraDevices.get(position);
+            return  cameraDevices.get(position);
         }
 
         @Override
@@ -428,7 +438,7 @@ public class MainActivity extends Activity {
                 convertView = View.inflate(mContext,
                         android.R.layout.simple_expandable_list_item_2, null);
             }
-            CameraDevice device = mFinder.getCameraList().get(position);
+            CameraDevice device =  cameraDevices.get(position);
             TextView title = (TextView) convertView
                     .findViewById(android.R.id.text1);
             title.setTextColor(Color.BLACK);

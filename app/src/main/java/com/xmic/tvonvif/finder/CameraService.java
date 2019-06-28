@@ -44,6 +44,7 @@ public class CameraService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
+		LogUtil.e(" xxx onBind 执行");
 		mDb = new Database(getApplicationContext());
 		mDevices = mDb.getCameraDevices();
 		return mBinder;
@@ -55,10 +56,12 @@ public class CameraService extends Service {
 		mFinder.setOnCameraFinderListener(finderListener);
 		super.onCreate();
 	}
-	
+
+
 	private OnCameraFinderListener finderListener = new OnCameraFinderListener() {
 		@Override
 		public void OnCameraListUpdated() {
+			List<CameraDevice> aa = 	mFinder.getCameraList();
 			if (mDevices != null && mDevices.size() > 0) {
 				for (CameraDevice cd1 : mDevices) {
 					for (CameraDevice cd2 : mFinder.getCameraList()) {
@@ -72,12 +75,6 @@ public class CameraService extends Service {
 		}
 	};
 	
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		LogUtil.e("xxx  onServiceConnected 执行"+  "(mFinder != null) = " + (mFinder != null));
-		return super.onStartCommand(intent, flags, startId);
 
-	}
 	
 }
