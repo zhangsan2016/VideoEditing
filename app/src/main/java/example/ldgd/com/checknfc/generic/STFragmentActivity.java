@@ -57,7 +57,7 @@ public class STFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setNfcAdapter();
-        myTag = MainActivity.getTag();
+        myTag = MainNfcActivity.getTag();
       //  mMenu = ST25Menu.newInstance(myTag);
 
     }
@@ -130,7 +130,7 @@ public class STFragmentActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        NFCTag currentTag = (NFCTag) MainActivity.getTag();
+        NFCTag currentTag = (NFCTag) MainNfcActivity.getTag();
 
         if (tagChanged(this, currentTag)) {
             Log.d(TAG, "=== Tag has changed : Restart MainActivity ===");
@@ -144,7 +144,7 @@ public class STFragmentActivity extends AppCompatActivity {
             Tag androidTag = nfcIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             // Create an intent to start the MainActivity
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, MainNfcActivity.class);
 
             // Attach the NFC information to this intent
             intent.putExtra(NfcAdapter.EXTRA_TAG, androidTag);
@@ -188,7 +188,7 @@ public class STFragmentActivity extends AppCompatActivity {
      * It goes back to the MainActivity.
      */
     protected void goBackToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainNfcActivity.class);
 
         // Set the flags to flush the activity stack history
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

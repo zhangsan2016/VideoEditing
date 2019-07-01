@@ -48,7 +48,7 @@ import com.st.st25sdk.UntraceableModeInterface;
 import com.st.st25sdk.command.Iso15693CustomKillCommandInterface;
 import com.st.st25sdk.type5.STType5PasswordInterface;
 
-import example.ldgd.com.checknfc.generic.MainActivity;
+import example.ldgd.com.checknfc.generic.MainNfcActivity;
 import example.ldgd.com.checknfc.generic.util.StringUtil;
 
 import static com.st.st25sdk.STException.STExceptionCode.CMD_FAILED;
@@ -182,7 +182,7 @@ public class MyPwdDialogFragment extends DialogFragment {
 
         // This dialog box will fail if the tag doesn't implement a STType5PasswordInterface
         try {
-            mSTType5PasswordInterface = (STType5PasswordInterface) MainActivity.getTag();
+            mSTType5PasswordInterface = (STType5PasswordInterface) MainNfcActivity.getTag();
         } catch (ClassCastException e) {
             // Tag not implementing STType5PasswordInterface
             Log.e(TAG, "Error! Tag not implementing STType5PasswordInterface!");
@@ -424,7 +424,7 @@ public class MyPwdDialogFragment extends DialogFragment {
             Log.v(TAG, "killTag");
 
             try {
-                killCommandInterface = (Iso15693CustomKillCommandInterface) MainActivity.getTag();
+                killCommandInterface = (Iso15693CustomKillCommandInterface) MainNfcActivity.getTag();
             } catch (ClassCastException e) {
                 Log.e(TAG, "Error! Tag not implementing Iso15693CustomKillCommandInterface!");
                 return AsyncTaskStatus.COMMAND_FAILED;
@@ -460,7 +460,7 @@ public class MyPwdDialogFragment extends DialogFragment {
             Log.v(TAG, "enterNewKillPassword");
 
             try {
-                killCommandInterface = (Iso15693CustomKillCommandInterface) MainActivity.getTag();
+                killCommandInterface = (Iso15693CustomKillCommandInterface) MainNfcActivity.getTag();
             } catch (ClassCastException e) {
                 Log.e(TAG, "Error! Tag not implementing Iso15693CustomKillCommandInterface!");
                 return AsyncTaskStatus.COMMAND_FAILED;
@@ -495,7 +495,7 @@ public class MyPwdDialogFragment extends DialogFragment {
             Log.v(TAG, "enableUntraceableMode");
 
             try {
-                untraceableModeInterface = (UntraceableModeInterface) MainActivity.getTag();
+                untraceableModeInterface = (UntraceableModeInterface) MainNfcActivity.getTag();
             } catch (ClassCastException e) {
                 Log.e(TAG, "Error! Tag not implementing UntraceableModeInterface!");
                 return AsyncTaskStatus.COMMAND_FAILED;

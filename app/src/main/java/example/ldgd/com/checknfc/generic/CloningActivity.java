@@ -90,7 +90,7 @@ public class CloningActivity extends AppCompatActivity {
 
         setNfcAdapter();
 
-        mTag = MainActivity.getTag();
+        mTag = MainNfcActivity.getTag();
 
         Button finishButton = (Button) findViewById(R.id.finishButton);
         finishButton.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +163,7 @@ public class CloningActivity extends AppCompatActivity {
 
     private void goBackToMainActivity() {
         // Create an intent to start the MainActivity
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainNfcActivity.class);
 
         // Attach the NFC information to this intent
         intent.putExtra(NfcAdapter.EXTRA_TAG, mAndroidTag);

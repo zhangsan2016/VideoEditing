@@ -62,7 +62,7 @@ import example.ldgd.com.checknfc.generic.util.TagDiscovery;
 import example.ldgd.com.checknfc.generic.util.UIHelper;
 
 
-public class MainActivity extends AppCompatActivity
+public class MainNfcActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener {
 
     private static final String TAG = "MainActivity";
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
 
     private static NfcIntentHook mNfcIntentHook;
 
-    public MainActivity() {
+    public MainNfcActivity() {
     /*    if (BuildConfig.DEBUG) {
             enableDebugCode();
         }*/
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         mResources = getResources();
         // Inflate content of FrameLayout
         FrameLayout frameLayout=(FrameLayout) findViewById(R.id.frame_content);
-        View childView = getLayoutInflater().inflate(R.layout.activity_main, null);
+        View childView = getLayoutInflater().inflate(R.layout.activity_nfc_main, null);
         frameLayout.addView(childView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity
                     if(st25DVTag.isMailboxEnabled(true)) {
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, getString(R.string.mailbox_enabled_eeprom_cannot_be_written), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainNfcActivity.this, getString(R.string.mailbox_enabled_eeprom_cannot_be_written), Toast.LENGTH_LONG).show();
                             }
                         });
                     }

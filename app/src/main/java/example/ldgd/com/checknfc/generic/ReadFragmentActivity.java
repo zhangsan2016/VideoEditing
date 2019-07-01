@@ -128,7 +128,7 @@ public class ReadFragmentActivity extends STFragmentActivity
         mChildView = getLayoutInflater().inflate(R.layout.fragment_read_memory, null);
         frameLayout.addView(mChildView);
 
-        myTag = (ST25DVTag) MainActivity.getTag();
+        myTag = (ST25DVTag) MainNfcActivity.getTag();
         if (super.getTag() == null) {
             showToast(R.string.invalid_tag);
             goBackToMainActivity();

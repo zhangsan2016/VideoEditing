@@ -55,7 +55,7 @@ import example.ldgd.com.checknfc.fragment.SysFileST25TAFragment;
 import example.ldgd.com.checknfc.fragment.SysFileST25TAHighDensityFragment;
 import example.ldgd.com.checknfc.fragment.SysFileType5Fragment;
 import example.ldgd.com.checknfc.fragment.TagInfoFragment;
-import example.ldgd.com.checknfc.generic.MainActivity;
+import example.ldgd.com.checknfc.generic.MainNfcActivity;
 
 
 public class UIHelper {
@@ -250,7 +250,7 @@ public class UIHelper {
     }
 
     public static Resources getApplicationResources() {
-        return MainActivity.mResources;
+        return MainNfcActivity.mResources;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

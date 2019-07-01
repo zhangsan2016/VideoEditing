@@ -140,7 +140,7 @@ public class NDEFActivity extends STFragmentActivity implements NavigationView.O
 
         super.onCreate(savedInstanceState);
 
-        myTag = MainActivity.getTag();
+        myTag = MainNfcActivity.getTag();
         if (myTag == null) {
             showToast(R.string.invalid_tag);
             goBackToMainActivity();
