@@ -25,6 +25,7 @@
 
 package example.ldgd.com.checknfc.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -97,7 +98,7 @@ public class CCFileType4Fragment extends STFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
     }
 

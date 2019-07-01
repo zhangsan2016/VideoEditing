@@ -298,7 +298,7 @@ public class PwdDialogFragment extends DialogFragment {
         // Warning: Function called from background thread! Post a request to the UI thread
         mHandler.post(new Runnable() {
             public void run() {
-                Toast.makeText(getContext(), getResources().getString(resource_id), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getResources().getString(resource_id), Toast.LENGTH_LONG).show();
             }
         });
     }

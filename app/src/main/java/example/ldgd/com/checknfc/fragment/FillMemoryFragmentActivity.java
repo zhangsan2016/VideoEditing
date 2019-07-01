@@ -25,10 +25,8 @@
 
 package example.ldgd.com.checknfc.fragment;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -171,15 +169,17 @@ public class FillMemoryFragmentActivity extends STFragmentActivity
             }
         });
 
-        if (mApiVersion >= Build.VERSION_CODES.M) {
+      /*  if (mApiVersion >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_PERMISSION);
             }
-        }
+        }*/
 
     }
 
-    @Override
+
+
+/*    @Override
     public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
         switch(requestCode) {
             case READ_PERMISSION:
@@ -193,7 +193,7 @@ public class FillMemoryFragmentActivity extends STFragmentActivity
                 }
                 break;
         }
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

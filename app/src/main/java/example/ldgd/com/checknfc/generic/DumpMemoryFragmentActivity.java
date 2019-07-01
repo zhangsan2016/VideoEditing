@@ -25,10 +25,8 @@
 
 package example.ldgd.com.checknfc.generic;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -144,15 +142,15 @@ public class DumpMemoryFragmentActivity extends STFragmentActivity
         getTag().setName(Common.MYLD_DEVICE_NAME);
         toolbar.setTitle(Common.MYLD_DEVICE_NAME);
 
-        if (mApiVersion >= Build.VERSION_CODES.M) {
+   /*     if (mApiVersion >= Build.VERSION_CODES.M) {
             // READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE are in the same permission
             // group called android.permission-group.STORAGE so, it is sufficient to call one of them
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION);
             }
-        }
+        }*/
     }
-
+/*
     @Override
     public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
         switch(requestCode) {
@@ -169,7 +167,7 @@ public class DumpMemoryFragmentActivity extends STFragmentActivity
                 }
                 break;
         }
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

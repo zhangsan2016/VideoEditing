@@ -25,12 +25,10 @@
 
 package example.ldgd.com.checknfc.fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -38,7 +36,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -218,7 +215,7 @@ public class NDEFVCardFragment extends NDEFRecordFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(getContext(), getResources().getString(R.string.discrete_value, mSeekPhotoCurPos), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.discrete_value, mSeekPhotoCurPos), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -314,18 +311,18 @@ public class NDEFVCardFragment extends NDEFRecordFragment {
     }
 
     public void getContact() {
-        if (mApiVersion >= Build.VERSION_CODES.M) {
+  /*      if (mApiVersion >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PICK_CONTACT);
             }
-        }
+        }*/
 
         startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), PICK_CONTACT);
     }
 
     public void captureFrame() {
         try {
-            if (mApiVersion >= Build.VERSION_CODES.KITKAT) {
+          /*  if (mApiVersion >= Build.VERSION_CODES.KITKAT) {
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     startImageCapture();
                 } else {
@@ -334,7 +331,7 @@ public class NDEFVCardFragment extends NDEFRecordFragment {
                 }
             } else {
                 showToast(R.string.device_doesnt_support_capturing);
-            }
+            }*/
 
         } catch (ActivityNotFoundException anfe) {
             showToast(R.string.device_doesnt_support_capturing);
@@ -358,7 +355,7 @@ public class NDEFVCardFragment extends NDEFRecordFragment {
         }
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
         switch(requestCode) {
             case CAMERA_CAPTURE:
@@ -369,7 +366,7 @@ public class NDEFVCardFragment extends NDEFRecordFragment {
                 }
                 break;
         }
-    }
+    }*/
 
     private void startImageCapture() {
         Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);

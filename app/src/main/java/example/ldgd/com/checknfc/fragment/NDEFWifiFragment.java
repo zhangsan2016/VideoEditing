@@ -25,18 +25,14 @@
 
 package example.ldgd.com.checknfc.fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -487,7 +483,7 @@ public class NDEFWifiFragment extends NDEFRecordFragment implements AdapterView.
      * Scan the currently available Wifi Access Points.
      */
     private  void startWifiScanning() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+     /*   if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
             // Wait for permission. The callback onRequestPermissionsResult will be called
         }else{
@@ -502,10 +498,10 @@ public class NDEFWifiFragment extends NDEFRecordFragment implements AdapterView.
             getActivity().registerReceiver(mWifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
             mWifiManager.startScan();
-        }
+        }*/
     }
 
-    @Override
+  /*  @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -514,7 +510,7 @@ public class NDEFWifiFragment extends NDEFRecordFragment implements AdapterView.
                 showToast(R.string.location_permission_not_granted);
             }
         }
-    }
+    }*/
 
     /**
      * The content from the NDEF Record is displayed in the Fragment

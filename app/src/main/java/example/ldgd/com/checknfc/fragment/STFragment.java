@@ -27,7 +27,6 @@ package example.ldgd.com.checknfc.fragment;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -81,8 +80,8 @@ public class STFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity context) {
+        super.onAttach((Activity) context);
         try {
             mFragmentListener = (STFragmentListener) context;
         } catch (ClassCastException e) {
@@ -91,6 +90,7 @@ public class STFragment extends Fragment {
         }
         setTag();
     }
+
 
     @Override
     public void onResume() {

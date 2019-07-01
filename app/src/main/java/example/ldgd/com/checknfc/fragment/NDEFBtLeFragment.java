@@ -142,7 +142,7 @@ public class NDEFBtLeFragment extends NDEFRecordFragment {
             mDeviceListName.add("New BT Le Device");
             mDeviceListMacAddr.add("AA:BB:CC:EE::FF");
 
-            mBtArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, mDeviceListName);
+            mBtArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item, mDeviceListName);
 
             mBoundedDevicesListView.setAdapter(mBtArrayAdapter);
             mBoundedDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

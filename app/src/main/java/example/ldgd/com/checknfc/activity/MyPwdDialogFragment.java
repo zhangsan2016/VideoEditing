@@ -363,7 +363,7 @@ public class MyPwdDialogFragment extends DialogFragment {
                 }
 
                 if(resources != null) {
-                    Toast.makeText(getContext(), resources.getString(resource_id), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MyPwdDialogFragment.this.getActivity(), resources.getString(resource_id), Toast.LENGTH_LONG).show();
                 }
             }
         });

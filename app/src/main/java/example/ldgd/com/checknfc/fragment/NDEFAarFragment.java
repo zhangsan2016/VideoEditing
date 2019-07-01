@@ -47,6 +47,8 @@ import com.st.st25sdk.ndef.NDEFMsg;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.security.AccessController.getContext;
+
 
 public class NDEFAarFragment extends NDEFRecordFragment implements AdapterView.OnItemClickListener {
 
@@ -114,7 +116,7 @@ public class NDEFAarFragment extends NDEFRecordFragment implements AdapterView.O
         mAarListView = (ListView) mView.findViewById(R.id.listViewAar);
         mAppListButton = (Button) mView.findViewById(R.id.appListButton);
 
-        PackageManager pm = getContext().getPackageManager();
+        PackageManager pm = getActivity().getPackageManager();
 
         mAarListView.setOnItemClickListener(this);
 
@@ -137,7 +139,7 @@ public class NDEFAarFragment extends NDEFRecordFragment implements AdapterView.O
             //results.add(rInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
             Log.w("Installed Applications", rInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
         }
-        ArrayAdapter arrAdapter = new ArrayAdapter(getContext(), R.layout.list_item, results);
+        ArrayAdapter arrAdapter = new ArrayAdapter(getActivity(), R.layout.list_item, results);
 
         mAarListView.setAdapter(arrAdapter);
 

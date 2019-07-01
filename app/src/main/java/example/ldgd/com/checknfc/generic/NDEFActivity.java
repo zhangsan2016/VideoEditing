@@ -563,7 +563,7 @@ public class NDEFActivity extends STFragmentActivity implements NavigationView.O
         STProgressDialog progressBarDialog = null;
         String message = getString(R.string.writing_index_message_to_tag);
         if (this.mFragment.isAdded()) {
-            Context ctx = this.mFragment.getContext();
+            Context ctx = this.mFragment.getActivity();
             if (ctx != null) {
                 progressBarDialog = new STProgressDialog(ctx, R.drawable.logo_st25_transp, message,
                         getResources().getColor(R.color.st_very_light_blue),
