@@ -160,6 +160,7 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                     @Override
                     public void run() {
 
+
                         synchronized (this) {
                             if (!mbitmap.isRecycled() && runGrabberThread == true) {
                                 Canvas canvas = VideoPlayerActivity.this.mHolder.lockCanvas();
