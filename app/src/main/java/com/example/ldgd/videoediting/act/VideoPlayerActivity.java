@@ -122,24 +122,24 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
 
         @Override
         public void run() {
+
             runGrabberThread = true;
             while (runGrabberThread) {
-
                 opencv_core.IplImage src = mDevice.grab();
                 if (src == null) {
                     runGrabberThread = false;
                     return;
                 }
+
+                // 获取视屏图片存放到 Bitmap 中
                 opencv_core.IplImage dst = cvCreateImage(new opencv_core.CvSize(mDevice.width,
                         mDevice.height), src.depth(), 4);
                 cvCvtColor(src, dst, CV_BGR2RGBA);
-
                 final Bitmap bitmap = Bitmap.createBitmap(mDevice.width, mDevice.height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(dst.getByteBuffer());
                 // 释放 IplImage (关键代码)
                 dst.position(0);
                 cvReleaseImage(dst);
-
 
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();

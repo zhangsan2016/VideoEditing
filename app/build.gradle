@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 17
+    compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.example.ldgd.videoediting"
-        minSdkVersion 10
-        targetSdkVersion 17
+        minSdkVersion 14
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -39,7 +39,7 @@ dependencies {
     compile files('libs/javacpp.jar')
     compile files('libs/javacv.jar')
     compile files('libs/maven-plugin-api-2.0.9.jar')
-    compile 'com.android.support:support-v4:18.0.0'
-  //  compile 'com.android.support:appcompat-v7:17.+'
+  //  compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:appcompat-v7:26.+'
   //  compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
