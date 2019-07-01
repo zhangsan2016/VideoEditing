@@ -60,7 +60,7 @@ import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2RGBA;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
 
-public class MainActivity extends Activity {
+public class MainVideoActivity extends Activity {
 
     public static final String TAG = "VideoEditing";
     private ListView mListView;
@@ -79,11 +79,11 @@ public class MainActivity extends Activity {
 
     static class MyHandle extends Handler {
 
-        WeakReference<MainActivity> mActivity;
+        WeakReference<MainVideoActivity> mActivity;
 
-        public  MyHandle(MainActivity mActivity) {
+        public  MyHandle(MainVideoActivity mActivity) {
             super();
-            this.mActivity = new WeakReference<MainActivity>(mActivity);
+            this.mActivity = new WeakReference<MainVideoActivity>(mActivity);
         }
 
         @Override
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
                         /*Bitmap bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height,matrix, true);*/
 
-                        MainActivity activity = mActivity.get();
+                        MainVideoActivity activity = mActivity.get();
                         Canvas canvas = activity.mHolder.lockCanvas();
                         canvas.drawBitmap(bitmap, 0, 0, null);
                         activity.mHolder.unlockCanvasAndPost(canvas);
@@ -132,13 +132,13 @@ public class MainActivity extends Activity {
 
 
     public void showToast(String str) {
-        Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
+        Toast.makeText(MainVideoActivity.this, str, Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_video_main);
         findView();
 
         // 设置矩形绘制（用于框选）
@@ -161,7 +161,7 @@ public class MainActivity extends Activity {
                                                IBinder service) {
                     CameraBinder cb = (CameraBinder) service;
                     mService = cb.getService();
-                    mAdapter = new MyAdapter(MainActivity.this,
+                    mAdapter = new MyAdapter(MainVideoActivity.this,
                             mService.getFinder());
                     mListView.setAdapter(mAdapter);
                     mService.getFinder().setOnCameraFinderListener(
@@ -171,7 +171,7 @@ public class MainActivity extends Activity {
 
 
                                     // 重新获取Fragment的强引用，并且判断是否存活
-                                    MainActivity act = mHandler.mActivity.get();
+                                    MainVideoActivity act = mHandler.mActivity.get();
                                     if (act == null ) {
                                         // Fragment死亡了，不再做任何的事情
                                         LogUtil.e("弱引用已经死亡！");
@@ -294,13 +294,13 @@ public class MainActivity extends Activity {
                                    public void run() {
 
                                        // 关闭提示
-                                       MainActivity.this.mProgressDialog.hide();
+                                       MainVideoActivity.this.mProgressDialog.hide();
                                        // 设置当前播放对象到appliction
-                                       MyApplication myApplication = (MyApplication) MainActivity.this.getApplication();
+                                       MyApplication myApplication = (MyApplication) MainVideoActivity.this.getApplication();
                                        myApplication.setAppointCameraDevice(device);
                                        // 启动播放界面
-                                       Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                                       MainActivity.this.startActivity(intent);
+                                       Intent intent = new Intent(MainVideoActivity.this, VideoPlayerActivity.class);
+                                       MainVideoActivity.this.startActivity(intent);
                                    }
                                });
 
@@ -373,10 +373,10 @@ public class MainActivity extends Activity {
                     public void run() {
 
                         if (!mbitmap.isRecycled()) {
-                            MainActivity.this.mProgressDialog.hide();
-                            Canvas canvas = MainActivity.this.mHolder.lockCanvas();
+                            MainVideoActivity.this.mProgressDialog.hide();
+                            Canvas canvas = MainVideoActivity.this.mHolder.lockCanvas();
                             canvas.drawBitmap(mbitmap, 0, 0, null);
-                            MainActivity.this.mHolder.unlockCanvasAndPost(canvas);
+                            MainVideoActivity.this.mHolder.unlockCanvasAndPost(canvas);
                             // 回收
                             mbitmap.recycle();
                             System.gc();
