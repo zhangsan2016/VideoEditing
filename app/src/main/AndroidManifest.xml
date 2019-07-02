@@ -18,9 +18,92 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".act.VideoPlayerActivity" android:screenOrientation="landscape"></activity>
+
+        <!-- NFC 模块界面 -->
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.MainNfcActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <data android:mimeType="application/vnd.wfa.wsc" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/filter_nfc" />
+        </activity>
+
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.ST25DVActivity"
+            android:label="ST25DVActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.WriteFragmentActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.STFragmentActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+
+
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.ReadFragmentActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.NDEFActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+        <activity
+            android:name="example.ldgd.com.checknfc.generic.DumpMemoryFragmentActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+        <activity
+            android:name="example.ldgd.com.checknfc.fragment.FillMemoryFragmentActivity"
+            android:label="WriteFragmentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/STAppTheme.NoActionBar" />
+
         <service android:name="com.xmic.tvonvif.finder.CameraService" />
 
-        <activity android:name=".act.VideoPlayerActivity" android:screenOrientation="landscape"></activity>
     </application>
 
 
