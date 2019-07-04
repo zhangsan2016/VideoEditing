@@ -355,7 +355,7 @@
     <string name="error_while_erasing_the_tag">擦除标签出错！请确认区域是否写保护</string>
     <string name="menu_nfc_forum">NFC 论坛</string>
     <string name="ndef_editor">NDEF编辑器</string>
-    <string name="present_pwd_succeeded">显示密码成功</string>
+    <string name="present_pwd_succeeded">验证密码成功</string>
     <string name="menu_st25dv_features">ST25DV 特点</string>
     <string name="configuration_protection">配置保护</string>
     <string name="register_management">寄存器管理</string>

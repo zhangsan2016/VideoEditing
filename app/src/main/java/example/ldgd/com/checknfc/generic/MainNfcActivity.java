@@ -30,10 +30,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -51,19 +53,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
+import com.st.st25sdk.MultiAreaInterface;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
 import com.st.st25sdk.TagCache;
 import com.st.st25sdk.TagHelper;
 import com.st.st25sdk.ndef.NDEFRecord;
+import com.st.st25sdk.type4a.Type4Tag;
+import com.st.st25sdk.type5.Type5Tag;
 import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
+import example.ldgd.com.checknfc.activity.MyPwdDialogFragment;
+import example.ldgd.com.checknfc.fragment.PwdDialogFragment;
 import example.ldgd.com.checknfc.generic.util.TagDiscovery;
 import example.ldgd.com.checknfc.generic.util.UIHelper;
 
 
 public class MainNfcActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener ,MyPwdDialogFragment.STType5PwdDialogListener{
 
     private static final String TAG = "MainActivity";
     private static final boolean DBG = true;
@@ -78,6 +85,19 @@ public class MainNfcActivity extends AppCompatActivity
     private PendingIntent mPendingIntent;
     private TextView mNfcWarningTextView;
     private Button mEnableNfcButton;
+    private   FragmentManager mFragmentManager;
+
+    @Override
+    public void onSTType5PwdDialogFinish(int result) {
+        Log.v(TAG, "onSTType5PwdDialogFinish. result = " + result);
+        if (result == PwdDialogFragment.RESULT_OK) {
+            // 读取nfc中的数据
+            ReadTheBytes(0,508);
+            showToast(this.getResources().getText( R.string.present_pwd_succeeded),Toast.LENGTH_SHORT);
+        } else {
+            Log.e(TAG, "Action failed! Tag not updated!");
+        }
+    }
 
 
     public interface NfcIntentHook {
@@ -94,12 +114,12 @@ public class MainNfcActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         // 去掉窗口标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-       // 隐藏顶部的状态栏
+        // 隐藏顶部的状态栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.default_layout);
 
         mResources = getResources();
@@ -142,6 +162,8 @@ public class MainNfcActivity extends AppCompatActivity
                 }
             }
         });
+
+        mFragmentManager = getSupportFragmentManager();
 
     }
 
@@ -326,7 +348,12 @@ public class MainNfcActivity extends AppCompatActivity
             case PRODUCT_ST_ST25DV04K_I:
             case PRODUCT_ST_ST25DV04K_J:
                 checkMailboxActivation();
-                startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);
+
+            //    startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);
+
+                // 读取nfc中的数据
+                ReadTheBytes(0,508);
+
                 break;
 
          /*   case PRODUCT_ST_LRi512:
@@ -408,6 +435,140 @@ public class MainNfcActivity extends AppCompatActivity
         }
     }
 
+
+
+    private int mStartAddress;
+    private int mNumberOfBytes;
+    private ContentViewAsync contentView;
+    private void ReadTheBytes(int startAddress,int numberOfBytes){
+
+        if (getTag() instanceof Type5Tag) {
+
+            mStartAddress = startAddress;
+            mNumberOfBytes = numberOfBytes;
+            contentView = new ContentViewAsync(getTag());
+            contentView.execute();
+        }
+
+    }
+
+    private void presentPassword() {
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                MyPwdDialogFragment.STPwdAction pwdAction = MyPwdDialogFragment.STPwdAction.PRESENT_CURRENT_PWD;
+                String message = " 输入区密码";
+
+                int passwordNumber = ST25DVTag.ST25DV_CONFIGURATION_PASSWORD_ID;
+                try {
+                    ST25DVTag myTag = (ST25DVTag) mTag;
+                    passwordNumber = myTag.getPasswordNumber(MultiAreaInterface.AREA4);
+                } catch (STException e) {
+                    e.printStackTrace();
+                }
+                // 参数 pwdAction : Dialog标识，passwordNumber ：得到的当前密码，message ： Dialog提示消息
+                MyPwdDialogFragment pwdDialogFragment = MyPwdDialogFragment.newInstance(pwdAction, passwordNumber, message);
+                pwdDialogFragment.show(mFragmentManager, "pwdDialogFragment");
+
+            }
+        }.start();
+
+    }
+
+    /**
+     *  异步读取NFC数组
+     */
+    class ContentViewAsync extends AsyncTask<Void, Integer, Boolean> {
+        byte mBuffer[] = null;
+        NFCTag mTag;
+        int mArea;
+
+        public ContentViewAsync(NFCTag myTag) {
+            mTag = myTag;
+        }
+
+        public ContentViewAsync(NFCTag myTag, int myArea) {
+            mTag = myTag;
+            mArea = myArea;
+        }
+
+        public ContentViewAsync(byte[] buffer) {
+            mBuffer = buffer;
+        }
+
+        protected Boolean doInBackground(Void... arg0) {
+            if (mBuffer == null) {
+                try {
+                    if (mTag instanceof Type4Tag) {
+                      /*  // Tag type 4
+                        int size = getMemoryAreaSizeInBytes(((Type4Tag) mTag), mArea);
+                        mNumberOfBytes = size;
+                        mStartAddress = 0;
+
+                        int fileId = UIHelper.getType4FileIdFromArea(mArea);
+
+                        // inform user that a read will be performed
+                        snackBarUiThread();
+
+                        mBuffer = ((Type4Tag) mTag).readBytes(fileId, 0, size);
+                        int nbrOfBytesRead = 0;
+                        if (mBuffer != null) {
+                            nbrOfBytesRead = mBuffer.length;
+                        }
+                        if (nbrOfBytesRead != mNumberOfBytes) {
+                            showToast(R.string.error_during_read_operation, nbrOfBytesRead);
+                        }*/
+                    } else {
+
+                        // Type 5
+                        mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
+                        // Warning: readBytes() may return less bytes than requested
+                        int nbrOfBytesRead = 0;
+                        if (mBuffer != null) {
+                            nbrOfBytesRead = mBuffer.length;
+                            com.example.ldgd.videoediting.util.LogUtil.e("读取到的 data  = " + new String(mBuffer));
+                        }
+                        if (nbrOfBytesRead != mNumberOfBytes) {
+
+                            showToast(MainNfcActivity.this.getResources().getText( R.string.error_during_read_operation),Toast.LENGTH_SHORT);
+                        }
+                    }
+                } catch (STException e) {
+                    Log.e(TAG, " STException = " + e.getMessage());
+                    switch (e.getError()) {
+                        case ISO15693_BLOCK_PROTECTED:
+                            // 输入密码
+                            presentPassword();
+                            break;
+                        default:
+                            e.printStackTrace();
+                            break;
+                    }
+                }
+
+            } else {
+                // buffer already initialized by constructor - no need to read Tag.
+                // Nothing to do
+            }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (mBuffer != null) {
+               /* LogUtil.e("mBuffer  ==  " + Arrays.toString(mBuffer));
+                mAdapter = new ReadFragmentActivity.CustomListAdapter(mBuffer);
+                lv = (ListView) findViewById(R.id.readBlocksListView);
+                lv.setAdapter(mAdapter);*/
+            }
+
+        }
+
+    }
+
+
+
     private void checkMailboxActivation() {
         new Thread(new Runnable() {
             public void run() {
@@ -472,6 +633,16 @@ public class MainNfcActivity extends AppCompatActivity
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+    }
+
+    private  void  showToast(final CharSequence context, final int length ){
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplication(), context, length).show();
+            }
+        });
     }
 
 }
