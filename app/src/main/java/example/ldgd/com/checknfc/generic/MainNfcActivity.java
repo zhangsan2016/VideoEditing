@@ -26,6 +26,7 @@
 package example.ldgd.com.checknfc.generic;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.nfc.NfcAdapter;
@@ -53,6 +54,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
+import com.example.ldgd.videoediting.act.MainVideoActivity;
+import com.example.ldgd.videoediting.entity.NfcConfiguration;
+import com.example.ldgd.videoediting.util.FipUtil;
+import com.google.gson.Gson;
 import com.st.st25sdk.MultiAreaInterface;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
@@ -70,7 +75,7 @@ import example.ldgd.com.checknfc.generic.util.UIHelper;
 
 
 public class MainNfcActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener ,MyPwdDialogFragment.STType5PwdDialogListener{
+        implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener, MyPwdDialogFragment.STType5PwdDialogListener {
 
     private static final String TAG = "MainActivity";
     private static final boolean DBG = true;
@@ -85,15 +90,17 @@ public class MainNfcActivity extends AppCompatActivity
     private PendingIntent mPendingIntent;
     private TextView mNfcWarningTextView;
     private Button mEnableNfcButton;
-    private   FragmentManager mFragmentManager;
+    private FragmentManager mFragmentManager;
+
+    private ProgressDialog mProgress;
 
     @Override
     public void onSTType5PwdDialogFinish(int result) {
         Log.v(TAG, "onSTType5PwdDialogFinish. result = " + result);
         if (result == PwdDialogFragment.RESULT_OK) {
             // 读取nfc中的数据
-            ReadTheBytes(0,508);
-            showToast(this.getResources().getText( R.string.present_pwd_succeeded),Toast.LENGTH_SHORT);
+            ReadTheBytes(0, 508);
+            showToast(this.getResources().getText(R.string.present_pwd_succeeded), Toast.LENGTH_SHORT);
         } else {
             Log.e(TAG, "Action failed! Tag not updated!");
         }
@@ -124,7 +131,7 @@ public class MainNfcActivity extends AppCompatActivity
 
         mResources = getResources();
         // Inflate content of FrameLayout
-        FrameLayout frameLayout=(FrameLayout) findViewById(R.id.frame_content);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_content);
         View childView = getLayoutInflater().inflate(R.layout.activity_nfc_main, null);
         frameLayout.addView(childView);
 
@@ -192,12 +199,12 @@ public class MainNfcActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-         switch (id) {
-             case R.id.preferred_application:
+        switch (id) {
+            case R.id.preferred_application:
               /*   Intent intent = new Intent(this, PreferredApplicationActivity.class);
                  startActivityForResult(intent, 1);*/
-                 break;
-             case R.id.about:
+                break;
+            case R.id.about:
                 super.onOptionsItemSelected(item);
                 break;
             default:
@@ -207,13 +214,13 @@ public class MainNfcActivity extends AppCompatActivity
     }
 
     void processIntent(Intent intent) {
-        if(intent == null) {
+        if (intent == null) {
             return;
         }
 
         Log.e(TAG, "processIntent " + intent);
 
-        if(mNfcIntentHook != null) {
+        if (mNfcIntentHook != null) {
             // NFC Intent hook used only for test purpose!
             mNfcIntentHook.newNfcIntent(intent);
             return;
@@ -308,10 +315,10 @@ public class MainNfcActivity extends AppCompatActivity
                 // Check if an intent has been associated to this menuItem
                 intent = item.getIntent();
 
-                if(intent != null) {
+                if (intent != null) {
                     startActivityForResult(intent, 1);
                 }
-            break;
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
@@ -341,7 +348,7 @@ public class MainNfcActivity extends AppCompatActivity
         MenuItem menuItem = menu.findItem(R.id.activity_menu);
         Log.e("aaa productId =", "productId = " + productId);
         switch (productId) {
-           case PRODUCT_ST_ST25DV64K_I:
+            case PRODUCT_ST_ST25DV64K_I:
             case PRODUCT_ST_ST25DV64K_J:
             case PRODUCT_ST_ST25DV16K_I:
             case PRODUCT_ST_ST25DV16K_J:
@@ -349,10 +356,10 @@ public class MainNfcActivity extends AppCompatActivity
             case PRODUCT_ST_ST25DV04K_J:
                 checkMailboxActivation();
 
-            //    startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);
+                //    startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);
 
                 // 读取nfc中的数据
-                ReadTheBytes(0,508);
+                ReadTheBytes(0, 508);
 
                 break;
 
@@ -436,11 +443,11 @@ public class MainNfcActivity extends AppCompatActivity
     }
 
 
-
     private int mStartAddress;
     private int mNumberOfBytes;
     private ContentViewAsync contentView;
-    private void ReadTheBytes(int startAddress,int numberOfBytes){
+
+    private void ReadTheBytes(int startAddress, int numberOfBytes) {
 
         if (getTag() instanceof Type5Tag) {
 
@@ -453,7 +460,7 @@ public class MainNfcActivity extends AppCompatActivity
     }
 
     private void presentPassword() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 super.run();
@@ -477,7 +484,7 @@ public class MainNfcActivity extends AppCompatActivity
     }
 
     /**
-     *  异步读取NFC数组
+     * 异步读取NFC数组
      */
     class ContentViewAsync extends AsyncTask<Void, Integer, Boolean> {
         byte mBuffer[] = null;
@@ -520,19 +527,40 @@ public class MainNfcActivity extends AppCompatActivity
                             showToast(R.string.error_during_read_operation, nbrOfBytesRead);
                         }*/
                     } else {
-
+                        showProgress();
                         // Type 5
                         mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
                         // Warning: readBytes() may return less bytes than requested
                         int nbrOfBytesRead = 0;
                         if (mBuffer != null) {
                             nbrOfBytesRead = mBuffer.length;
-                            com.example.ldgd.videoediting.util.LogUtil.e("读取到的 data  = " + new String(mBuffer));
-                        }
-                        if (nbrOfBytesRead != mNumberOfBytes) {
 
-                            showToast(MainNfcActivity.this.getResources().getText( R.string.error_during_read_operation),Toast.LENGTH_SHORT);
+                            // 获取网址，读取文件到本地
+                            String strData = new String(mBuffer);
+                            String jsonData = strData.substring(0, strData.lastIndexOf("}") + 1);
+                            Gson gson = new Gson();
+                            NfcConfiguration config = gson.fromJson(jsonData, NfcConfiguration.class);
+
+                            // 登录 ftp 服务器中下载配置文件到本地中
+                            FipUtil fipUtil = new FipUtil(config.getIpaddr(), config.getPort(), config.getUser(), config.getPwd());
+                            String serviceCatalog = "configs/" + config.getUuid() + ".json";
+                            String saveCatalog = MainNfcActivity.this.getFilesDir() + "/" +  config.getUuid() +".json";
+                            fipUtil.getFile(serviceCatalog, saveCatalog);
+
+                            // 关闭加载框
+                            stopProgress();
+                            // 关闭 fip 服务器连接
+                            fipUtil.clear();
+
+                            // 跳转到视屏列表界面
+                            Intent intent = new Intent(MainNfcActivity.this, MainVideoActivity.class);
+                            startActivity(intent);
+
+                            // 关闭当前界面
+                         //   MainNfcActivity.this.finish();
+
                         }
+
                     }
                 } catch (STException e) {
                     Log.e(TAG, " STException = " + e.getMessage());
@@ -545,6 +573,8 @@ public class MainNfcActivity extends AppCompatActivity
                             e.printStackTrace();
                             break;
                     }
+                    // 关闭加载框
+                    stopProgress();
                 }
 
             } else {
@@ -568,14 +598,13 @@ public class MainNfcActivity extends AppCompatActivity
     }
 
 
-
     private void checkMailboxActivation() {
         new Thread(new Runnable() {
             public void run() {
                 ST25DVTag st25DVTag = (ST25DVTag) mTag;
 
                 try {
-                    if(st25DVTag.isMailboxEnabled(true)) {
+                    if (st25DVTag.isMailboxEnabled(true)) {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast.makeText(MainNfcActivity.this, getString(R.string.mailbox_enabled_eeprom_cannot_be_written), Toast.LENGTH_LONG).show();
@@ -592,7 +621,7 @@ public class MainNfcActivity extends AppCompatActivity
     private void startTagActivity(Class<?> cls, int menuTitle) {
 
         // We are about to start the activity related to a tag so mTag should be non null
-        if(getTag() == null) {
+        if (getTag() == null) {
             Log.e(TAG, "Error! Trying to start a TagActivity with a null tag!");
             return;
         }
@@ -627,7 +656,6 @@ public class MainNfcActivity extends AppCompatActivity
             NDEFRecord.class.getField("DBG_NDEF_RECORD").set(null, true);
 
 
-
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -635,12 +663,33 @@ public class MainNfcActivity extends AppCompatActivity
         }
     }
 
-    private  void  showToast(final CharSequence context, final int length ){
+    private void showToast(final CharSequence context, final int length) {
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(getApplication(), context, length).show();
+            }
+        });
+    }
+
+    private void showProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgress = ProgressDialog.show(MainNfcActivity.this, "", "Loading...");
+            }
+        });
+
+    }
+
+    private void stopProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mProgress != null){
+                    mProgress.cancel();
+                }
             }
         });
     }
