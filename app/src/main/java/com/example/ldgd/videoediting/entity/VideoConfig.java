@@ -8,7 +8,7 @@ import java.util.List;
  * 说明：
  */
 
-public class VideoConfiguration {
+public class VideoConfig {
 
     /**
      * username : slvier

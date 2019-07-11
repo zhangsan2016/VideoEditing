@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
+import com.example.ldgd.videoediting.entity.FtpConfig;
 import com.example.ldgd.videoediting.util.LogUtil;
 import com.googlecode.javacv.cpp.opencv_core.CvSize;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
@@ -74,14 +75,18 @@ public class MainVideoActivity extends Activity {
     private View mLoginView;
     private boolean runGrabberThread = false;
     private static CameraService mService;
-    private  ServiceConnection mServiceConnection;
+    private ServiceConnection mServiceConnection;
     private int mNowIndex = -1;
+
+    // Ftp 服务器配置信息
+    private FtpConfig ftpConfig = null;
+
 
     static class MyHandle extends Handler {
 
         WeakReference<MainVideoActivity> mActivity;
 
-        public  MyHandle(MainVideoActivity mActivity) {
+        public MyHandle(MainVideoActivity mActivity) {
             super();
             this.mActivity = new WeakReference<MainVideoActivity>(mActivity);
         }
@@ -141,6 +146,11 @@ public class MainVideoActivity extends Activity {
         setContentView(R.layout.activity_video_main);
         findView();
 
+        // 获取 ftp 服务器配置文件
+        ftpConfig = (FtpConfig) getIntent().getSerializableExtra("ftpconfig");
+
+
+
         // 设置矩形绘制（用于框选）
       /*  GameView gameView = new GameView(this);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
@@ -172,7 +182,7 @@ public class MainVideoActivity extends Activity {
 
                                     // 重新获取Fragment的强引用，并且判断是否存活
                                     MainVideoActivity act = mHandler.mActivity.get();
-                                    if (act == null ) {
+                                    if (act == null) {
                                         // Fragment死亡了，不再做任何的事情
                                         LogUtil.e("弱引用已经死亡！");
                                         return;
@@ -181,7 +191,7 @@ public class MainVideoActivity extends Activity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            List<CameraDevice>  list =   mService.getFinder().getCameraList();
+                                            List<CameraDevice> list = mService.getFinder().getCameraList();
                                             mAdapter.setCameraDevices(list);
 
                                         }
@@ -207,8 +217,6 @@ public class MainVideoActivity extends Activity {
             }
 
         });
-
-
 
 
     }
@@ -289,20 +297,21 @@ public class MainVideoActivity extends Activity {
                                 /*mService.getDb().addCamera(device);
                                 new Thread(new VideoPlayer(device)).start();*/
 
-                              runOnUiThread(new Runnable() {
-                                   @Override
-                                   public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                       // 关闭提示
-                                       MainVideoActivity.this.mProgressDialog.hide();
-                                       // 设置当前播放对象到appliction
-                                       MyApplication myApplication = (MyApplication) MainVideoActivity.this.getApplication();
-                                       myApplication.setAppointCameraDevice(device);
-                                       // 启动播放界面
-                                       Intent intent = new Intent(MainVideoActivity.this, VideoPlayerActivity.class);
-                                       MainVideoActivity.this.startActivity(intent);
-                                   }
-                               });
+                                        // 关闭提示
+                                        MainVideoActivity.this.mProgressDialog.hide();
+                                        // 设置当前播放对象到appliction
+                                        MyApplication myApplication = (MyApplication) MainVideoActivity.this.getApplication();
+                                        myApplication.setAppointCameraDevice(device);
+                                        // 启动播放界面
+                                        Intent intent = new Intent(MainVideoActivity.this, VideoPlayerActivity.class);
+                                        intent.putExtra("ftpconfig", ftpConfig);
+                                        MainVideoActivity.this.startActivity(intent);
+                                    }
+                                });
 
 
                             } else {
@@ -396,18 +405,18 @@ public class MainVideoActivity extends Activity {
     private class MyAdapter extends BaseAdapter {
 
         private Context mContext;
-     //   private CameraFinder mFinder;
+        //   private CameraFinder mFinder;
         private List<CameraDevice> cameraDevices;
 
         public MyAdapter(Context context, CameraFinder finder) {
             mContext = context;
-       //     mFinder = finder;
+            //     mFinder = finder;
             cameraDevices = new ArrayList<CameraDevice>();
         }
 
         public void setCameraDevices(List<CameraDevice> list) {
-          //    notifyDataSetChanged();
-           if (list != null) {
+            //    notifyDataSetChanged();
+            if (list != null) {
                 cameraDevices.clear();
                 cameraDevices.addAll(list);
                 notifyDataSetChanged();
@@ -417,12 +426,12 @@ public class MainVideoActivity extends Activity {
 
         @Override
         public int getCount() {
-            return   cameraDevices.size();
+            return cameraDevices.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return  cameraDevices.get(position);
+            return cameraDevices.get(position);
         }
 
         @Override
@@ -436,7 +445,7 @@ public class MainVideoActivity extends Activity {
                 convertView = View.inflate(mContext,
                         android.R.layout.simple_expandable_list_item_2, null);
             }
-            CameraDevice device =  cameraDevices.get(position);
+            CameraDevice device = cameraDevices.get(position);
             TextView title = (TextView) convertView
                     .findViewById(android.R.id.text1);
             title.setTextColor(Color.BLACK);

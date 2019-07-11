@@ -55,8 +55,8 @@ import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.act.MainVideoActivity;
-import com.example.ldgd.videoediting.entity.NfcConfiguration;
-import com.example.ldgd.videoediting.util.FipUtil;
+import com.example.ldgd.videoediting.entity.FtpConfig;
+import com.example.ldgd.videoediting.util.FtpUtil;
 import com.google.gson.Gson;
 import com.st.st25sdk.MultiAreaInterface;
 import com.st.st25sdk.NFCTag;
@@ -539,10 +539,10 @@ public class MainNfcActivity extends AppCompatActivity
                             String strData = new String(mBuffer);
                             String jsonData = strData.substring(0, strData.lastIndexOf("}") + 1);
                             Gson gson = new Gson();
-                            NfcConfiguration config = gson.fromJson(jsonData, NfcConfiguration.class);
+                            FtpConfig config = gson.fromJson(jsonData, FtpConfig.class);
 
                             // 登录 ftp 服务器中下载配置文件到本地中
-                            FipUtil fipUtil = new FipUtil(config.getIpaddr(), config.getPort(), config.getUser(), config.getPwd());
+                            FtpUtil fipUtil = new FtpUtil(config.getIpaddr(), config.getPort(), config.getUser(), config.getPwd());
                             String serviceCatalog = "configs/" + config.getUuid() + ".json";
                             String saveCatalog = MainNfcActivity.this.getFilesDir() + "/" +  config.getUuid() +".json";
                             fipUtil.getFile(serviceCatalog, saveCatalog);
@@ -554,6 +554,7 @@ public class MainNfcActivity extends AppCompatActivity
 
                             // 跳转到视屏列表界面
                             Intent intent = new Intent(MainNfcActivity.this, MainVideoActivity.class);
+                            intent.putExtra("ftpconfig",config);
                             startActivity(intent);
 
                             // 关闭当前界面

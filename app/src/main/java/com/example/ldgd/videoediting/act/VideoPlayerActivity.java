@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
+import com.example.ldgd.videoediting.entity.FtpConfig;
 import com.example.ldgd.videoediting.util.LogUtil;
 import com.example.ldgd.videoediting.view.EditView;
 import com.googlecode.javacv.cpp.opencv_core;
@@ -37,6 +38,9 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
     // 自定义View 编辑框
     private EditView editView;
 
+    // Ftp 服务器配置信息
+    private FtpConfig ftpConfig = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,12 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
         // 隐藏顶部的状态栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_video_player);
+
+
+        // 获取 ftp 服务器配置文件
+        ftpConfig = (FtpConfig) getIntent().getSerializableExtra("ftpconfig");
+
+        LogUtil.e("VideoPlayerActivity = " + ftpConfig.toString());
 
         // 初始化 View
         initView();
@@ -100,6 +110,8 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
     public void saveButtonOnClick(Rect rect) {
        /* Rect surRect = new Rect();
         mSurfaceView.getDrawingRect(surRect);*/
+
+       // 读取配置文件
 
     }
 

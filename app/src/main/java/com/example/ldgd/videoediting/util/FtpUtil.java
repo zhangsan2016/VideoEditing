@@ -18,7 +18,7 @@ import java.nio.charset.Charset;
  * 说明：
  */
 
-public class FipUtil {
+public class FtpUtil {
 
     //ftp对象
     private FTPClient ftp;
@@ -32,7 +32,7 @@ public class FipUtil {
     private String pwd;
 
     //调用此方法，输入对应得ip，端口，要连接到的ftp端的名字，要连接到的ftp端的对应得密码。连接到ftp对象，并验证登录进入fto
-    public FipUtil(String ip, int port, String name, String pwd) {
+    public FtpUtil(String ip, int port, String name, String pwd) {
         ftp = new FTPClient();
         this.ip = ip;
         this.port = port;

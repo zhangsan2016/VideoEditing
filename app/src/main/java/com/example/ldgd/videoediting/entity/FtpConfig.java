@@ -1,12 +1,14 @@
 package com.example.ldgd.videoediting.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by ldgd on 2019/7/10.
  * 功能：存储NFC中读取的信息
  * 说明：
  */
 
-public class NfcConfiguration {
+public class FtpConfig implements Serializable {
 
     /**
      * user : chenquan
