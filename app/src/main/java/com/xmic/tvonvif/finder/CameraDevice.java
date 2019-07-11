@@ -91,6 +91,10 @@ public class CameraDevice implements IPCam {
 		}
 	};
 
+	public String getRtspUri() {
+		return rtspUri;
+	}
+
 	@Override
 	public int getId() {
 		return this.id;

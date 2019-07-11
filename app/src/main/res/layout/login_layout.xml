@@ -42,7 +42,6 @@
 
     <EditText
         android:id="@+id/etPWD"
-        android:text="12345678q"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvPWD"

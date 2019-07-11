@@ -2,6 +2,7 @@ package com.example.ldgd.videoediting.act;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -9,11 +10,13 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
@@ -47,6 +50,9 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
     // Ftp 服务器配置信息
     private FtpConfig ftpConfig = null;
 
+    // 加载框
+    private ProgressDialog mProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +78,7 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
             new Thread(new VideoPlayer(device)).start();
         }
 
-        LogUtil.e("VideoPlayerActivity device = " + device.toString() );
+        LogUtil.e("VideoPlayerActivity device = " + device.toString());
 
 
         // 设置矩形绘制（用于框选）
@@ -119,13 +125,32 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
        /* Rect surRect = new Rect();
         mSurfaceView.getDrawingRect(surRect);*/
 
-        // 读取配置文件
-         String json =   readTextFile(this.getFilesDir() + "/" + ftpConfig.getUuid() + ".json");
-
+        // 读取下载在本地的配置文件
+        String json = readTextFile(this.getFilesDir() + "/" + ftpConfig.getUuid() + ".json");
         // json转换成类
         Gson gson = new Gson();
         VideoConfig config = gson.fromJson(json, VideoConfig.class);
-        LogUtil.e("VideoPlayerActivity readTextFile string = " + config.toString());
+        // 更新配置文件到 PTF 服务器
+        if (device != null && device.width > 0 && device.height > 0) {
+            VideoConfig.RtspinfoBean rtspinfoBean = new VideoConfig.RtspinfoBean();
+            rtspinfoBean.setUrl(device.getRtspUri());
+
+        //    screenWidth = 800  screenHeigh = 480
+/*            rtspinfoBean.setX();
+            rtspinfoBean.setY();
+            rtspinfoBean.setW();
+            rtspinfoBean.setH();*/
+            config.getRtspinfo().add(rtspinfoBean);
+        }
+
+        // 获取当前屏幕的宽高
+        DisplayMetrics dm = new DisplayMetrics();
+        //获取屏幕信息
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int screenWidth = dm.widthPixels;
+        int screenHeigh = dm.heightPixels;
+        LogUtil.e("VideoPlayerActivity screenWidth = " + screenWidth + "  screenHeigh = " + screenHeigh);
+
 
     }
 
@@ -221,10 +246,11 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
 
     /**
      * 从本地读取json
+     *
      * @param filePath
      * @return
      */
-    private  String readTextFile(String filePath) {
+    private String readTextFile(String filePath) {
         StringBuilder sb = new StringBuilder();
         try {
             File file = new File(filePath);
@@ -239,6 +265,26 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    private void showToast(final CharSequence context, final int length) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplication(), context, length).show();
+            }
+        });
+    }
+
+    private void showProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgress = ProgressDialog.show(VideoPlayerActivity.this, "", "Save...");
+            }
+        });
+
     }
 
 
