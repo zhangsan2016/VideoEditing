@@ -18,10 +18,16 @@ import android.view.WindowManager;
 import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
 import com.example.ldgd.videoediting.entity.FtpConfig;
+import com.example.ldgd.videoediting.entity.VideoConfig;
 import com.example.ldgd.videoediting.util.LogUtil;
 import com.example.ldgd.videoediting.view.EditView;
+import com.google.gson.Gson;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.xmic.tvonvif.finder.CameraDevice;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
@@ -54,7 +60,6 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
         // 获取 ftp 服务器配置文件
         ftpConfig = (FtpConfig) getIntent().getSerializableExtra("ftpconfig");
 
-        LogUtil.e("VideoPlayerActivity = " + ftpConfig.toString());
 
         // 初始化 View
         initView();
@@ -66,6 +71,9 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
             //   mService.getDb().addCamera(device);
             new Thread(new VideoPlayer(device)).start();
         }
+
+        LogUtil.e("VideoPlayerActivity device = " + device.toString() );
+
 
         // 设置矩形绘制（用于框选）
         editView = new EditView(this);
@@ -111,7 +119,13 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
        /* Rect surRect = new Rect();
         mSurfaceView.getDrawingRect(surRect);*/
 
-       // 读取配置文件
+        // 读取配置文件
+         String json =   readTextFile(this.getFilesDir() + "/" + ftpConfig.getUuid() + ".json");
+
+        // json转换成类
+        Gson gson = new Gson();
+        VideoConfig config = gson.fromJson(json, VideoConfig.class);
+        LogUtil.e("VideoPlayerActivity readTextFile string = " + config.toString());
 
     }
 
@@ -163,7 +177,7 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                 float scaleHeight = ((float) newHeight) / height;
                 Matrix matrix = new Matrix();
                 matrix.postScale(scaleWidth, scaleHeight);
-                if(newWidth <= 0 || newHeight <= 0){
+                if (newWidth <= 0 || newHeight <= 0) {
                     continue;
                 }
                 mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
@@ -198,11 +212,33 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
     }
 
 
-
     @Override
     protected void onDestroy() {
         runGrabberThread = false;
         super.onDestroy();
+    }
+
+
+    /**
+     * 从本地读取json
+     * @param filePath
+     * @return
+     */
+    private  String readTextFile(String filePath) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            File file = new File(filePath);
+            InputStream in = null;
+            in = new FileInputStream(file);
+            int tempbyte;
+            while ((tempbyte = in.read()) != -1) {
+                sb.append((char) tempbyte);
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 
 

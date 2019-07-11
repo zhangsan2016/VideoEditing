@@ -179,4 +179,22 @@ public class VideoConfig {
             this.h = h;
         }
     }
+
+
+    @Override
+    public String toString() {
+        return "VideoConfig{" +
+                "username='" + username + '\'' +
+                ", pwd='" + pwd + '\'' +
+                ", dir='" + dir + '\'' +
+                ", ipaddress='" + ipaddress + '\'' +
+                ", port=" + port +
+                ", graph='" + graph + '\'' +
+                ", graphMD5='" + graphMD5 + '\'' +
+                ", percentage=" + percentage +
+                ", label=" + label +
+                ", detect=" + detect +
+                ", rtspinfo=" + rtspinfo +
+                '}';
+    }
 }

@@ -254,8 +254,8 @@ public class MainVideoActivity extends Activity {
                     etUser.setText(cd2.username);
                     etPwd.setText(cd2.password);
                 } else {
-                /*	etUser.setText("");
-                    etPwd.setText("");*/
+                	etUser.setText("");
+                    etPwd.setText("");
                 }
             }
         });

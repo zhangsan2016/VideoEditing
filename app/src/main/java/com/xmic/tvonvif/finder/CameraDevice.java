@@ -154,4 +154,26 @@ public class CameraDevice implements IPCam {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "CameraDevice{" +
+				"uuid=" + uuid +
+				", serviceURL='" + serviceURL + '\'' +
+				", id=" + id +
+				", name='" + name + '\'' +
+				", ipAddr='" + ipAddr + '\'' +
+				", isOnline=" + isOnline +
+				", rtspUri='" + rtspUri + '\'' +
+				", mGrabber=" + mGrabber +
+				", mSurfaceView=" + mSurfaceView +
+				", mListener=" + mListener +
+				", width=" + width +
+				", height=" + height +
+				", rate=" + rate +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", listener=" + listener +
+				'}';
+	}
 }
