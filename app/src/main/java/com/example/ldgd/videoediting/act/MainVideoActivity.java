@@ -249,6 +249,9 @@ public class MainVideoActivity extends Activity {
                 EditText etPwd = (EditText) mLoginView.findViewById(R.id.etPWD);
                 CameraDevice cd = mService.getFinder().getCameraList()
                         .get(mNowIndex);
+
+                LogUtil.e("VideoPlayerActivity = " + cd.toString());
+
                 CameraDevice cd2 = mService.getDb().getCameraByUUID(cd.uuid);
                 if (cd2 != null) {
                     etUser.setText(cd2.username);
@@ -259,6 +262,21 @@ public class MainVideoActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        LogUtil.e("VideoPlayerActivity = onRestart" );
+        if(mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtil.e("VideoPlayerActivity = onResume" );
     }
 
     private View.OnClickListener mButtonClickListener = new View.OnClickListener() {
@@ -446,6 +464,7 @@ public class MainVideoActivity extends Activity {
                         android.R.layout.simple_expandable_list_item_2, null);
             }
             CameraDevice device = cameraDevices.get(position);
+
             TextView title = (TextView) convertView
                     .findViewById(android.R.id.text1);
             title.setTextColor(Color.BLACK);
@@ -454,6 +473,19 @@ public class MainVideoActivity extends Activity {
                     .findViewById(android.R.id.text2);
             subTitle.setTextColor(Color.BLACK);
             subTitle.setText(device.serviceURL.toString());
+
+            // 判断当前设备是否保存过
+            MyApplication myApplication = new MyApplication();
+            List<String> saveList = myApplication.getSaveDevice();
+            for (int i = 0; i < saveList.size(); i++) {
+                if( device.getRtspUri().equals(saveList.get(i))){
+                    convertView.setBackgroundResource(R.color.item_back_formerly);
+                    break;
+                }
+            }
+
+
+
             return convertView;
         }
     }

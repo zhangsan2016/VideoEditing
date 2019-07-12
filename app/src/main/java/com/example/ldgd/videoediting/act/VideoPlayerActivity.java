@@ -171,6 +171,11 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                  fipUtil.putFile(ftpPath, jsonPath);
 
                  showToast("保存成功！",Toast.LENGTH_SHORT);
+
+                 // 记录保存过的设备地址
+                 MyApplication myApplication = (MyApplication) VideoPlayerActivity.this.getApplication();
+                 myApplication.recordDevice(device.getRtspUri());
+
                  // 关闭选框
                  editView.clear();
 
