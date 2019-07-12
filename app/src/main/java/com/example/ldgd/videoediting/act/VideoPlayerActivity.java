@@ -22,7 +22,9 @@ import com.example.ldgd.videoediting.R;
 import com.example.ldgd.videoediting.appliction.MyApplication;
 import com.example.ldgd.videoediting.entity.FtpConfig;
 import com.example.ldgd.videoediting.entity.VideoConfig;
+import com.example.ldgd.videoediting.util.FtpUtil;
 import com.example.ldgd.videoediting.util.LogUtil;
+import com.example.ldgd.videoediting.util.ReadWriteUtil;
 import com.example.ldgd.videoediting.view.EditView;
 import com.google.gson.Gson;
 import com.googlecode.javacv.cpp.opencv_core;
@@ -31,6 +33,7 @@ import com.xmic.tvonvif.finder.CameraDevice;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
@@ -121,35 +124,60 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
 
 
     @Override
-    public void saveButtonOnClick(Rect rect) {
+    public void saveButtonOnClick(final Rect rect) {
        /* Rect surRect = new Rect();
         mSurfaceView.getDrawingRect(surRect);*/
 
-        // 读取下载在本地的配置文件
-        String json = readTextFile(this.getFilesDir() + "/" + ftpConfig.getUuid() + ".json");
-        // json转换成类
-        Gson gson = new Gson();
-        VideoConfig config = gson.fromJson(json, VideoConfig.class);
-        // 更新配置文件到 PTF 服务器
-        if (device != null && device.width > 0 && device.height > 0) {
-            VideoConfig.RtspinfoBean rtspinfoBean = new VideoConfig.RtspinfoBean();
-            rtspinfoBean.setUrl(device.getRtspUri());
+     new  Thread(new Runnable() {
+         @Override
+         public void run() {
+             showProgress();
 
-        //    screenWidth = 800  screenHeigh = 480
-/*            rtspinfoBean.setX();
-            rtspinfoBean.setY();
-            rtspinfoBean.setW();
-            rtspinfoBean.setH();*/
-            config.getRtspinfo().add(rtspinfoBean);
-        }
+             // 读取下载在本地的配置文件
+             String jsonPath = VideoPlayerActivity.this.getFilesDir() + "/" + ftpConfig.getUuid() + ".json";
+             String json = readTextFile(jsonPath);
+             // json转换成类
+             Gson gson = new Gson();
+             VideoConfig config = gson.fromJson(json, VideoConfig.class);
+             // 更新配置文件到 PTF 服务器
+             if (device != null && device.width > 0 && device.height > 0) {
 
-        // 获取当前屏幕的宽高
-        DisplayMetrics dm = new DisplayMetrics();
-        //获取屏幕信息
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int screenWidth = dm.widthPixels;
-        int screenHeigh = dm.heightPixels;
-        LogUtil.e("VideoPlayerActivity screenWidth = " + screenWidth + "  screenHeigh = " + screenHeigh);
+                 // 获取当前屏幕的宽高
+                 DisplayMetrics dm = new DisplayMetrics();
+                 //获取屏幕信息
+                 getWindowManager().getDefaultDisplay().getMetrics(dm);
+                 int screenWidth = dm.widthPixels;
+                 int screenHeigh = dm.heightPixels;
+
+                 // 配置信息
+                 VideoConfig.RtspinfoBean rtspinfoBean = new VideoConfig.RtspinfoBean();
+                 rtspinfoBean.setUrl(device.getRtspUri());
+
+                 LogUtil.e("VideoPlayerActivity rect =  " + rect.left + "  " + rect.top + "   " + rect.right + "    " + rect.bottom);
+                 //    screenWidth = 800  screenHeigh = 480
+                 rtspinfoBean.setX(new BigDecimal((float) rect.left / screenWidth).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                 rtspinfoBean.setY(new BigDecimal((float) rect.top / screenHeigh).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                 rtspinfoBean.setW(new BigDecimal((float) rect.right / screenWidth).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                 rtspinfoBean.setH(new BigDecimal((float) rect.bottom / screenHeigh).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                 config.getRtspinfo().add(rtspinfoBean);
+                 LogUtil.e("VideoPlayerActivity rtspinfoBean =  " + rtspinfoBean.toString());
+
+                 String newJson = gson.toJson(config);
+                 ReadWriteUtil.writeStringToFile(newJson, jsonPath);
+
+                 // 登录 ftp  更新配置文件到服务器
+                 FtpUtil fipUtil = new FtpUtil(ftpConfig.getIpaddr(), ftpConfig.getPort(), ftpConfig.getUser(), ftpConfig.getPwd());
+                 String ftpPath = "configs/" + ftpConfig.getUuid() + ".json";
+                 fipUtil.putFile(ftpPath, jsonPath);
+
+                 showToast("保存成功！",Toast.LENGTH_SHORT);
+                 // 关闭选框
+                 editView.clear();
+
+             }
+             stopProgress();
+         }
+     }).start();
 
 
     }
@@ -284,7 +312,17 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                 mProgress = ProgressDialog.show(VideoPlayerActivity.this, "", "Save...");
             }
         });
+    }
 
+    private void stopProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mProgress != null) {
+                    mProgress.cancel();
+                }
+            }
+        });
     }
 
 

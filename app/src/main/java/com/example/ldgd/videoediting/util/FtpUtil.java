@@ -83,11 +83,15 @@ public class FtpUtil {
     }
 
 
-    public void putFile() {
+    /**
+     *  推送文件到 Ftp 服务器
+     * @param ftpPath 保存到 ftp服务器的路径
+     * @param filePath  本地文件路径
+     */
+    public void putFile(String ftpPath,String filePath) {
         try {
-
-            OutputStream os = ftp.storeFileStream("configs/configs.json");
-            FileInputStream fis = new FileInputStream(new File("F:/configs.json"));
+            OutputStream os = ftp.storeFileStream(ftpPath);
+            FileInputStream fis = new FileInputStream(new File(filePath));
 
             byte[] b = new byte[1024];
             int len = 0;
@@ -128,6 +132,7 @@ public class FtpUtil {
     }
 
 
+
     /**
      * 清除登录状态
      */
@@ -143,7 +148,7 @@ public class FtpUtil {
     }
 
     public static void main(String args[]) throws ClassNotFoundException, IOException {
-/*        FipUtil m = new FipUtil("192.168.1.111", 21, "chenquan", "ch0070165194");
+     /*   FtpUtil m = new FtpUtil("192.168.1.111", 21, "chenquan", "ch0070165194");
 
         // m.putFile();
         // m.putFile2();
@@ -186,11 +191,7 @@ public class FtpUtil {
             ftpClient.disconnect();
         }*/
 
-     String data = "{\"user\":\"chenquan\",\"pwd\":\"ch0070165194\",\"dir\":\"configs\",\"ipaddr\":\"192.168.1.111\",\"port\":21,\"uuid\":\"201905140001\"}�������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������";
 
-        String data2 = data.substring(0,data.lastIndexOf("}")+1);
-
-        System.out.println(data2);
 
 
     }

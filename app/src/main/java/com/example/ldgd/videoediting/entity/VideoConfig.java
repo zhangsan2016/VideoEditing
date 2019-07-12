@@ -178,6 +178,18 @@ public class VideoConfig {
         public void setH(double h) {
             this.h = h;
         }
+
+
+        @Override
+        public String toString() {
+            return "RtspinfoBean{" +
+                    "url='" + url + '\'' +
+                    ", x=" + x +
+                    ", y=" + y +
+                    ", w=" + w +
+                    ", h=" + h +
+                    '}';
+        }
     }
 
 

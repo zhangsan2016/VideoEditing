@@ -180,7 +180,8 @@ public class EditView extends FrameLayout {
 
     public void clear() {
         rect = new Rect(0, 0, 0, 0);
-        invalidate();
+        postInvalidate();
+       // invalidate();
     }
 
     public void setListener(EditViewOnClickListener listener) {
