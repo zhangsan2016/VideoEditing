@@ -119,6 +119,8 @@ public class MainNfcActivity extends AppCompatActivity
         }*/
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 去掉窗口标题
@@ -694,5 +696,9 @@ public class MainNfcActivity extends AppCompatActivity
             }
         });
     }
+
+
+
+
 
 }

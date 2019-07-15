@@ -461,11 +461,11 @@ public class MainVideoActivity extends Activity {
             CameraDevice device = cameraDevices.get(position);
 
             TextView title = (TextView) convertView
-                    .findViewById(android.R.id.text1);
+                    .findViewById(android.R.id.text2);
             title.setTextColor(Color.BLACK);
             title.setText(device.uuid.toString());
             TextView subTitle = (TextView) convertView
-                    .findViewById(android.R.id.text2);
+                    .findViewById(android.R.id.text1);
             subTitle.setTextColor(Color.BLACK);
             subTitle.setText(device.serviceURL.toString());
 
