@@ -267,17 +267,12 @@ public class MainVideoActivity extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        LogUtil.e("VideoPlayerActivity = onRestart" );
+        LogUtil.e("VideoPlayerActivity = onRestart" + (mAdapter== null) );
         if(mAdapter != null){
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LogUtil.e("VideoPlayerActivity = onResume" );
-    }
 
     private View.OnClickListener mButtonClickListener = new View.OnClickListener() {
 
@@ -475,7 +470,7 @@ public class MainVideoActivity extends Activity {
             subTitle.setText(device.serviceURL.toString());
 
             // 判断当前设备是否保存过
-            MyApplication myApplication = new MyApplication();
+            MyApplication myApplication = (MyApplication) MainVideoActivity.this.getApplication();
             List<String> saveList = myApplication.getSaveDevice();
             for (int i = 0; i < saveList.size(); i++) {
                 if( device.getRtspUri().equals(saveList.get(i))){

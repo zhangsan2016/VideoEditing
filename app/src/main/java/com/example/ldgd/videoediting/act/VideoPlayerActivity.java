@@ -170,11 +170,11 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                  String ftpPath = "configs/" + ftpConfig.getUuid() + ".json";
                  fipUtil.putFile(ftpPath, jsonPath);
 
-                 showToast("保存成功！",Toast.LENGTH_SHORT);
-
                  // 记录保存过的设备地址
                  MyApplication myApplication = (MyApplication) VideoPlayerActivity.this.getApplication();
                  myApplication.recordDevice(device.getRtspUri());
+
+                 showToast("保存成功！",Toast.LENGTH_SHORT);
 
                  // 关闭选框
                  editView.clear();
