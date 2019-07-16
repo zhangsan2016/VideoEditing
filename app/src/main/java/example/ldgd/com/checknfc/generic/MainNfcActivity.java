@@ -77,7 +77,7 @@ import example.ldgd.com.checknfc.generic.util.UIHelper;
 public class MainNfcActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TagDiscovery.onTagDiscoveryCompletedListener, MyPwdDialogFragment.STType5PwdDialogListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainNfcActivity";
     private static final boolean DBG = true;
 
     static public Resources mResources;
@@ -336,7 +336,7 @@ public class MainNfcActivity extends AppCompatActivity
     public void onTagDiscoveryCompleted(NFCTag nfcTag, TagHelper.ProductID productId, STException e) {
         //Toast.makeText(getApplication(), "onTagDiscoveryCompleted. productId:" + productId, Toast.LENGTH_LONG).show();
         if (e != null) {
-            Log.i(TAG, e.toString());
+            Log.e(TAG, e.toString());
             Toast.makeText(getApplication(), R.string.error_while_reading_the_tag, Toast.LENGTH_LONG).show();
             return;
         }

@@ -17,11 +17,11 @@ public class aa extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-   /* public boolean selfPermissionGranted(String permission) {
+    public boolean selfPermissionGranted(String permission) {
         // For Android < Android M, self permissions are always granted.
         boolean result = true;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
 
             if (targetSdkVersion >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 // targetSdkVersion >= Android M, we can
@@ -33,8 +33,9 @@ public class aa extends AppCompatActivity {
                 result = PermissionChecker.checkSelfPermission(context, permission)
                         == PermissionChecker.PERMISSION_GRANTED;
             }
-        }
+        }*/
 
-        return result;*/
-
+        return result;
     }
+
+}
