@@ -179,6 +179,7 @@ public class VideoPlayerActivity extends Activity implements EditView.EditViewOn
                  // 关闭选框
                  editView.clear();
 
+
              }
              stopProgress();
          }
